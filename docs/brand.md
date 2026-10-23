@@ -90,7 +90,7 @@ Use the icons in the Icons group, drawn on a 48px grid with `ink` edges and natu
 
 ## Anatomy of a toy page
 
-Top bar: `home` (left, back to the home page), the announced word chip and the readout (centre), `sound-on` (right). Then the stage, which holds the World. Then the one big control. Then optional quick-jump buttons (at most three). The grown-ups button sits bottom left, small, in `ink-soft`.
+Top bar: `home` (left, back to the home page), the readout (centre), `sound-on` (right). Then the stage, which holds the World. Then the one big control. Then optional quick-jump buttons (at most three). The grown-ups button sits bottom left, small, in `ink-soft`.
 
 ## Logos
 
