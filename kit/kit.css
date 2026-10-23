@@ -1,0 +1,83 @@
+/* Poke & See kit. Load after tokens.css. Classes are prefixed ps-. Every value comes from tokens.css. */
+*, *::before, *::after { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html, body { height: 100%; }
+body { margin: 0; background: var(--paper); color: var(--ink); font-family: var(--font-brand); -webkit-tap-highlight-color: transparent; }
+
+/* focus, everywhere */
+.ps-btn:focus-visible, .ps-chip:focus-visible, .ps-round:focus-visible, .ps-tile:focus-visible,
+.ps-grownups:focus-visible, .ps-slider:focus-visible { outline: 4px solid var(--focus); outline-offset: 4px; }
+
+/* Button: the pressable Frame control */
+.ps-btn { display: inline-flex; align-items: center; justify-content: center; gap: var(--space-2);
+  min-height: var(--target-min); padding: 6px var(--space-6) 0; box-sizing: border-box;
+  font-family: var(--font-kid); font-weight: 700; font-size: 28px; line-height: 1.1; letter-spacing: .02em;
+  color: var(--ink); background: var(--card); border: var(--stroke-control) solid var(--ink);
+  border-radius: var(--radius-m); box-shadow: var(--press); cursor: pointer;
+  transition: transform .1s ease, box-shadow .1s ease; -webkit-tap-highlight-color: transparent; }
+.ps-btn svg { width: 36px; height: 36px; flex: none; margin-top: -4px; }
+.ps-btn:active, .ps-btn.is-pressed { transform: translateY(4px); box-shadow: var(--press-down); }
+.ps-btn--tap { background: var(--tap); color: var(--on-tap); }
+.ps-btn--sun { background: var(--sun); }
+.ps-btn--ice { background: var(--ice); }
+.ps-btn--water { background: var(--water); color: var(--on-water); }
+.ps-btn--steam { background: var(--steam); }
+.ps-btn[aria-current="true"], .ps-btn[aria-pressed="true"] { outline: var(--stroke-control) solid var(--ink); outline-offset: 4px; }
+
+/* WordChip: the announced word */
+.ps-chip { display: inline-block; font-family: var(--font-kid); font-weight: 700; font-size: 64px; line-height: 1;
+  letter-spacing: .02em; padding: 12px 28px 2px; border: var(--stroke-control) solid var(--ink);
+  border-radius: var(--radius-m); box-shadow: var(--press); background: var(--card); color: var(--ink); }
+.ps-chip--ice { background: var(--ice); }
+.ps-chip--water { background: var(--water); color: var(--on-water); }
+.ps-chip--steam { background: var(--steam); }
+.ps-chip--sm { font-size: 40px; padding: 8px 20px 0; }
+
+/* Readout: a big number with its real unit */
+.ps-readout { font-family: var(--font-kid); font-weight: 700; font-size: 72px; line-height: 1;
+  font-variant-numeric: tabular-nums; color: var(--ink); }
+.ps-readout small { font-size: .5em; margin-left: .05em; vertical-align: .55em; }
+
+/* Slider: the one big control. Set --ps-track to the toy's zones. */
+.ps-slider-wrap { position: relative; padding-bottom: 30px; }
+.ps-slider { -webkit-appearance: none; appearance: none; display: block; width: 100%; height: 84px; margin: 0;
+  background: transparent; cursor: grab; --ps-track: var(--tap); }
+.ps-slider::-webkit-slider-runnable-track { box-sizing: border-box; height: 38px; border-radius: var(--radius-pill);
+  border: var(--stroke-control) solid var(--ink); background: var(--ps-track); }
+.ps-slider::-webkit-slider-thumb { -webkit-appearance: none; box-sizing: border-box; width: var(--knob); height: var(--knob);
+  margin-top: -21px; border-radius: 50%; background: var(--card); border: 7px solid var(--ink); box-shadow: var(--press); }
+.ps-slider::-moz-range-track { box-sizing: border-box; height: 38px; border-radius: var(--radius-pill);
+  border: var(--stroke-control) solid var(--ink); background: var(--ps-track); }
+.ps-slider::-moz-range-thumb { box-sizing: border-box; width: var(--knob); height: var(--knob); border-radius: 50%;
+  background: var(--card); border: 7px solid var(--ink); box-shadow: var(--press); }
+.ps-mark { position: absolute; bottom: 0; transform: translateX(-50%); font-family: var(--font-kid); font-weight: 700;
+  font-size: 22px; line-height: 1; display: flex; flex-direction: column; align-items: center; gap: 3px; color: var(--ink); }
+.ps-mark::before { content: ""; width: 5px; height: 10px; border-radius: 3px; background: var(--ink); }
+
+/* Round control: sound, home */
+.ps-round { width: var(--target-min); height: var(--target-min); border-radius: 50%; display: grid; place-items: center;
+  padding: 0; background: var(--card); border: var(--stroke-control) solid var(--ink); box-shadow: var(--press); cursor: pointer; }
+.ps-round svg { width: 34px; height: 34px; }
+.ps-round:active { transform: translateY(4px); box-shadow: var(--press-down); }
+
+/* Grown-ups corner */
+.ps-grownups { display: inline-flex; align-items: center; gap: var(--space-2); min-height: 44px; padding: 0 var(--space-4) 0 var(--space-2);
+  font-family: var(--font-brand); font-size: 14px; font-weight: 600; letter-spacing: .02em; color: var(--ink-soft);
+  background: transparent; border: 2px solid var(--line); border-radius: var(--radius-pill); cursor: pointer; }
+.ps-grownups svg { width: 30px; height: 30px; }
+.ps-panel { background: var(--card); border: 2px solid var(--line); border-radius: var(--radius-l);
+  padding: var(--space-6); max-width: 34rem; display: flex; flex-direction: column; gap: var(--space-3); }
+.ps-panel .ps-label { font-size: 13px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-soft); margin: 0; }
+.ps-panel h3 { margin: 0; font-size: 32px; line-height: 1.1; font-weight: 500; letter-spacing: -.01em; text-wrap: balance; }
+.ps-panel p { margin: 0; font-size: 17px; line-height: 1.55; }
+.ps-panel .ps-ask { font-weight: 600; }
+
+/* Toy tile: the home page */
+.ps-tile { display: flex; flex-direction: column; text-decoration: none; color: var(--ink); background: var(--card);
+  border: var(--stroke-control) solid var(--ink); border-radius: var(--radius-l); box-shadow: var(--press); overflow: hidden;
+  transition: transform .1s ease, box-shadow .1s ease; }
+.ps-tile:active { transform: translateY(4px); box-shadow: var(--press-down); }
+.ps-tile-art { aspect-ratio: 4 / 3; max-width: 100%; display: block; border-bottom: var(--stroke-control) solid var(--ink); }
+.ps-tile-name { font-family: var(--font-kid); font-weight: 700; font-size: 28px; line-height: 1.1; letter-spacing: .02em;
+  padding: var(--space-3) var(--space-4) var(--space-3); }
+.ps-tile--soon { box-shadow: none; border-style: dashed; color: var(--ink-soft); }

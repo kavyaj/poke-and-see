@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Poke & See</title>
+<meta name="description" content="Tiny science toys for kids aged 3 to 5. Poke something, see what happens. No ads, no accounts, no tracking.">
+<link rel="icon" href="kit/logo/poke-and-see-mark.svg" type="image/svg+xml">
+<link rel="stylesheet" href="kit/tokens.css">
+<link rel="stylesheet" href="kit/kit.css">
+<style>
+  .home { max-width: 1080px; margin: 0 auto; min-height: 100%; display: flex; flex-direction: column; gap: var(--space-8);
+    padding-block: max(var(--space-8), env(safe-area-inset-top, 0px)) var(--space-8);
+    padding-left: max(var(--space-4), env(safe-area-inset-left, 0px)); padding-right: max(var(--space-4), env(safe-area-inset-right, 0px)); }
+  header { display: flex; flex-direction: column; gap: var(--space-3); }
+  header img { display: block; width: min(100%, 560px); height: auto; }
+  header p { margin: 0; max-width: 34rem; font-size: 17px; line-height: 1.55; color: var(--ink-soft); }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 220px), 1fr)); gap: var(--space-6); }
+  .grid .ps-tile { min-width: 0; }
+  footer { margin-top: auto; font-size: 14px; line-height: 1.45; color: var(--ink-soft); border-top: 2px solid var(--line); padding-top: var(--space-4); }
+  @media (max-width: 520px) { .grid { grid-template-columns: 1fr 1fr; gap: var(--space-4); } .ps-tile-name { font-size: 20px; } }
+</style>
+</head>
+<body>
+<main class="home">
+  <header>
+    <h1 style="margin:0"><img src="kit/logo/poke-and-see-lockup.svg" alt="Poke & See"></h1>
+    <p>Tiny science toys for kids aged 3 to 5. Poke something, see what happens. Best on a tablet, with a grown-up nearby and the sound on.</p>
+  </header>
+
+  <section class="grid" aria-label="Toys">
+    <a class="ps-tile" href="toys/ice-water-steam/" data-say="Ice, water, steam">
+      <svg class="ps-tile-art" viewBox="0 0 240 180" aria-hidden="true"><rect width="240" height="180" fill="var(--sky-day)"/><rect y="120" width="240" height="60" fill="var(--paper)"/><path d="M84 52v86q0 10 10 10h52q10 0 10-10V52" fill="rgba(255,255,255,.55)" stroke="var(--ink)" stroke-width="5"/><path d="M87 104q16-5 33 0t33 0V138q0 7-7 7H94q-7 0-7-7z" fill="var(--water)"/><rect x="104" y="84" width="34" height="34" rx="7" fill="var(--ice)" stroke="var(--ink)" stroke-width="3" transform="rotate(-8 121 101)"/><rect x="74" y="156" width="92" height="9" rx="4.5" fill="var(--ink)"/></svg>
+      <span class="ps-tile-name">ICE WATER STEAM</span>
+    </a>
+    <span class="ps-tile ps-tile--soon" aria-label="Paint, coming soon">
+      <svg class="ps-tile-art" viewBox="0 0 240 180" aria-hidden="true"><rect width="240" height="180" fill="var(--paper)"/><circle cx="96" cy="86" r="40" fill="var(--paint-blue)"/><circle cx="146" cy="86" r="40" fill="var(--paint-yellow)"/><path d="M121 55a40 40 0 0 1 0 62a40 40 0 0 1 0-62z" fill="#3F7A3A"/></svg>
+      <span class="ps-tile-name">PAINT</span>
+    </span>
+    <span class="ps-tile ps-tile--soon" aria-label="Shadow, coming soon">
+      <svg class="ps-tile-art" viewBox="0 0 240 180" aria-hidden="true"><rect width="240" height="180" fill="var(--sky-day)"/><circle cx="170" cy="50" r="20" fill="var(--sun)"/><rect y="132" width="240" height="48" fill="var(--grass)"/><rect x="66" y="78" width="12" height="56" fill="var(--bark)"/><circle cx="72" cy="70" r="28" fill="var(--leaf)"/><path d="M78 134 L20 160 L32 168 L84 136z" fill="rgba(27,35,51,.28)"/></svg>
+      <span class="ps-tile-name">SHADOW</span>
+    </span>
+  </section>
+
+  <footer>No ads. No accounts. No tracking. Just toys.</footer>
+</main>
+<script>
+  // Tapping a tile says its name, then opens the toy.
+  document.querySelectorAll('a.ps-tile[data-say]').forEach(function (a) {
+    a.addEventListener('click', function (e) {
+      if (!('speechSynthesis' in window)) return;
+      e.preventDefault();
+      try { speechSynthesis.cancel(); var u = new SpeechSynthesisUtterance(a.dataset.say); u.rate = 0.85; speechSynthesis.speak(u); } catch (err) {}
+      setTimeout(function () { location.href = a.href; }, 900);
+    });
+  });
+</script>
+</body>
+</html>

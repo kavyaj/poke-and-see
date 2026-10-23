@@ -1,0 +1,88 @@
+/* Poke & See tokens. Generated from the design system's tokens.json. Edit there, not here. */
+@font-face{font-family:'Syne';src:url('fonts/Syne-400.woff2') format('woff2');font-weight:400;font-display:swap}
+@font-face{font-family:'Syne';src:url('fonts/Syne-500.woff2') format('woff2');font-weight:500;font-display:swap}
+@font-face{font-family:'Syne';src:url('fonts/Syne-600.woff2') format('woff2');font-weight:600;font-display:swap}
+@font-face{font-family:'Andika';src:url('fonts/Andika-400.woff2') format('woff2');font-weight:400;font-display:swap}
+@font-face{font-family:'Andika';src:url('fonts/Andika-700.woff2') format('woff2');font-weight:700;font-display:swap}
+:root{
+  --paper: #F2F6F7; /* Page ground for every toy and the home page. Cool off-white, so world colours read true against it. */
+  --card: #FFFFFF; /* Raised surfaces: buttons at rest, tiles, the grown-ups panel, the steam chip. */
+  --line: #C9D4DA; /* Decorative hairlines and dividers only. Never a control border (controls use ink). */
+  --ink: #1B2333; /* All text and every control outline. Reads on paper, card, sun, sun-soft, tap-soft, ice and sky-day. */
+  --ink-soft: #4C586E; /* Secondary text for grown-ups (captions, the grown-ups button label) on paper and card. */
+  --sun: #FFC83D; /* The brand colour. Logo tile, the hint arrow, the one highlight per screen. Text on sun is ink. */
+  --sun-soft: #FFEAB0; /* Tint behind sun-coloured moments; hover on tiles. */
+  --tap: #2456E6; /* Selected or primary control fill. Text and icons on it are on-tap. */
+  --on-tap: #FFFFFF; /* Text and icons on a tap fill. */
+  --tap-soft: #DCE6FD; /* Tint behind tap-coloured text; the active tile's art backdrop. */
+  --focus: #C83E12; /* Keyboard focus ring: 4px solid, 4px offset. 3:1 or better on paper and card. */
+  --sky-day: #A9D4EF; /* Daytime sky. Lit from the top left; may run to a lighter tint toward the horizon. */
+  --sky-dusk: #F2AE86; /* Sunrise and sunset glow, low on the horizon only. */
+  --sky-night: #142038; /* Night sky. Stars are star. Never pure black. */
+  --star: #FFF4C9; /* Stars and moonlight on sky-night. */
+  --ocean-deep: #0D3354; /* Open ocean on the globe; the deepest water anywhere. */
+  --ocean: #1C5F8E; /* Ocean between deep and shallow; seas and big lakes. */
+  --ocean-shallow: #3F8DB4; /* Continental shelves, reefs, shallow bays. */
+  --shore: #9BCBDA; /* Surf line and the lightest water at a coast. */
+  --snow: #EEF4F6; /* Snow, polar caps, mountain tops. */
+  --glacier: #BCDCE8; /* Shadowed snow and glacier ice. */
+  --forest: #2D4F32; /* Dense forest and rainforest; the darkest land green. */
+  --leaf: #4F7B36; /* Healthy leaves and temperate land. */
+  --grass: #7FA14C; /* Grassland, young shoots, sunlit leaves. */
+  --savanna: #BBA868; /* Dry grassland and drooping, thirsty leaves. */
+  --sand: #DCC89C; /* Desert and beaches. */
+  --rock: #8A7C6C; /* Mountains, stones, the rock in Float or Sink. */
+  --soil: #6B4B34; /* Earth in a pot, wet ground, roots. */
+  --bark: #5A3E2B; /* Tree trunks and stems that have turned woody. */
+  --petal-red: #C8323A; /* Flower petals (tomato, poppy). */
+  --petal-yellow: #F2C230; /* Flower petals (sunflower, bean flower centres). */
+  --ice: #CBEAF6; /* Ice, and the ICE chip and slider zone. Ink text on it. */
+  --water: #2F6FD6; /* Liquid water, the WATER chip and slider zone. Text on it is on-water. */
+  --on-water: #FFFFFF; /* Text and icons on a water fill. */
+  --water-surface: #8FB6F2; /* The lit surface line of water and bubbles in it. */
+  --steam: #FFFFFF; /* Steam clouds and the STEAM chip. Always with an ink edge, since it matches card. */
+  --flame: #FF7A1A; /* Burner flames, outer. */
+  --flame-core: #FFD35A; /* Burner flames, inner core; heat glow. */
+  --ember: #D9441B; /* Hot embers, the hot end of a heat scale. */
+  --atom-oxygen: #E03C3C; /* Oxygen atoms (CPK convention). Water is drawn as one oxygen with two hydrogens. */
+  --atom-hydrogen: #F5F7F9; /* Hydrogen atoms (CPK convention); always with an ink edge. */
+  --lens: #18213A; /* Inside the magnifier: the dark ground that zoomed-in views sit on. */
+  --lens-water: #2A3F86; /* Liquid region inside the magnifier. */
+  --paint-red: #D1242B; /* Paint Mixer red, a cadmium-like red. */
+  --paint-yellow: #F5C518; /* Paint Mixer yellow. Blue + yellow must make a real green. */
+  --paint-blue: #1D3F9E; /* Paint Mixer blue, ultramarine-like. */
+  --paint-white: #FAFAF6; /* Paint Mixer white, for tints. */
+  --paint-black: #222222; /* Paint Mixer black, for shades. */
+  --space-1: 4px; /* Hairline gaps, icon to text inside a chip. */
+  --space-2: 8px; /* Tight groups. */
+  --space-3: 12px; /* Gap between sibling buttons. */
+  --space-4: 16px; /* Minimum side gutter; padding inside panels on phones. */
+  --space-6: 24px; /* Button side padding; gap between toy regions. */
+  --space-8: 32px; /* Panel padding on tablets. */
+  --space-12: 48px; /* Section gaps on the home page. */
+  --space-16: 64px; /* Large separations; home page top padding. */
+  --radius-s: 12px; /* Small chips, icon tiles. */
+  --radius-m: 20px; /* Buttons and word chips. */
+  --radius-l: 28px; /* Panels, toy tiles, the stage frame. */
+  --radius-pill: 999px; /* Slider tracks, the grown-ups button, round controls. */
+  --press: 0 5px 0 #1B2333; /* Every pressable control at rest: a solid ink ledge, like a physical toy button. */
+  --press-down: 0 1px 0 #1B2333; /* The same control while pressed (move it down 4px). */
+  --float: 0 12px 28px rgba(27,35,51,0.14); /* World objects lifted off a surface (a dropped stone, a paint blob). Never on controls. */
+  --target-min: 64px; /* Smallest tap target a kid ever gets. */
+  --knob: 72px; /* Slider knob diameter. */
+  --stroke-control: 4px; /* Outline on every control (ink). */
+  --stroke-diagram: 3px; /* Edges in zoomed-in science diagrams (molecules, cut-aways). */
+  --stroke-object: 2px; /* Optional soft edge on world objects, ink at 50% or a darker shade of the object. */
+  --font-kid: Andika, "Comic Neue", "Trebuchet MS", system-ui, sans-serif;
+  --font-brand: Syne, "Avenir Next", system-ui, sans-serif;
+}
+.word-xl{font-family:var(--font-kid);font-size:64px;line-height:1;font-weight:700;letter-spacing:0.02em} /* The big announced word at the top of a toy. */
+.word-l{font-family:var(--font-kid);font-size:40px;line-height:1;font-weight:700;letter-spacing:0.02em} /* Word chips and large buttons. */
+.word-m{font-family:var(--font-kid);font-size:28px;line-height:1.1;font-weight:700;letter-spacing:0.02em} /* Quick-jump buttons and toy tile names. */
+.number-xl{font-family:var(--font-kid);font-size:72px;line-height:1;font-weight:700} /* Readouts: temperature, count, size. Always with its real unit. */
+.number-s{font-family:var(--font-kid);font-size:22px;line-height:1;font-weight:700} /* Scale marks under a slider. */
+.display{font-family:var(--font-brand);font-size:64px;line-height:0.95;font-weight:500;letter-spacing:-0.02em} /* The wordmark and the home page headline. Once per page. */
+.title{font-family:var(--font-brand);font-size:32px;line-height:1.1;font-weight:500;letter-spacing:-0.01em} /* Toy names for grown-ups, panel headings. */
+.body{font-family:var(--font-brand);font-size:17px;line-height:1.55;font-weight:400} /* Grown-ups corner and site copy. Keep lines near 60 characters. */
+.small{font-family:var(--font-brand);font-size:14px;line-height:1.45;font-weight:400} /* Captions and the grown-ups button. */
+.label{font-family:var(--font-brand);font-size:13px;line-height:1.2;font-weight:600;letter-spacing:0.08em} /* Small uppercase labels for grown-ups. */
