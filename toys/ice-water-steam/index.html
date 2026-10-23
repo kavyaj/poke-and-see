@@ -14,16 +14,13 @@
   user-select:none;-webkit-user-select:none}
 button{touch-action:manipulation}
 
-/* top bar: home, the word and the number, sound */
+/* top bar: home, the number, sound */
 .top{display:flex;align-items:center;gap:var(--space-3)}
 .top .mid{flex:1;min-width:0;display:flex;align-items:center;justify-content:center;gap:var(--space-4)}
 .top .ps-round{flex:none}
 .sound .off{display:none}
 .sound[aria-pressed="false"] .on{display:none}
 .sound[aria-pressed="false"] .off{display:block}
-.ps-chip{display:inline-flex;align-items:center;min-height:var(--target-min);cursor:pointer;transition:background-color .25s,color .25s}
-.ps-chip.pop{animation:pop .3s cubic-bezier(.3,1.6,.5,1)}
-@keyframes pop{0%{transform:scale(.8)}100%{transform:scale(1)}}
 .num{background:none;border:0;padding:6px 4px 0;min-width:3.4ch;min-height:var(--target-min);text-align:left;cursor:pointer}
 .num:focus-visible{outline:4px solid var(--focus);outline-offset:4px}
 
@@ -53,14 +50,11 @@ button{touch-action:manipulation}
 .foot .ps-panel{position:absolute;left:0;bottom:calc(100% + var(--space-2));z-index:5;width:min(34rem,100%)}
 
 @media (max-width:520px){
-  .top{align-items:flex-start}
-  .top .mid{flex-direction:column;gap:var(--space-1)}
-  .ps-chip{font-size:40px;padding:8px 20px 0}
-  .num{font-size:44px;text-align:center}
+  .num{font-size:56px;text-align:center}
   .jumps .ps-btn{flex-direction:column;gap:0;font-size:20px;min-height:84px;padding-inline:var(--space-1)}
   .jumps .ps-btn svg{width:32px;height:32px;margin-top:0}
 }
-@media (prefers-reduced-motion:reduce){.hint{animation:none}.ps-chip.pop{animation:none}}
+@media (prefers-reduced-motion:reduce){.hint{animation:none}}
 </style>
 </head>
 <body>
@@ -72,7 +66,7 @@ button{touch-action:manipulation}
       <svg viewBox="0 0 48 48" aria-hidden="true"><path d="M8 23L24 9l16 14v16a2 2 0 0 1-2 2H29V30h-10v11H10a2 2 0 0 1-2-2z" fill="var(--sun)" stroke="var(--ink)" stroke-width="3.5" stroke-linejoin="round"/></svg>
     </a>
     <div class="mid">
-      <button class="ps-chip ps-chip--ice" id="badge" type="button">ICE</button>
+      <span class="sr" id="word" aria-live="polite">ICE</span>
       <button class="ps-readout num" id="num" type="button"><span id="numv">−10</span><small>°</small></button>
     </div>
     <button class="ps-round sound" id="sound" type="button" aria-pressed="true" aria-label="Sound">
@@ -126,7 +120,7 @@ const INK=T('ink'),CARD=T('card'),SKY=T('sky-day'),ICE=T('ice'),WATER=T('water')
 const DIAG=parseFloat(T('stroke-diagram'))||3;
 const ICE2=mix(ICE,WATER,0.3);
 const WORDS=['ICE','WATER','STEAM'],SAY=['Ice','Water','Steam'];
-const CHIP=['ps-chip--ice','ps-chip--water','ps-chip--steam'],FILL=[ICE,WATER,STEAM];
+const FILL=[ICE,WATER,STEAM];
 const reduce=PS.reducedMotion;
 const $=id=>document.getElementById(id);
 const cl=(x,a=0,b=1)=>x<a?a:x>b?b:x;
@@ -418,7 +412,7 @@ function ambient(now,temp,a,b){
 }
 
 /* ---------- UI ---------- */
-const slider=$('temp'),num=$('num'),numv=$('numv'),badge=$('badge'),hint=$('hint');
+const slider=$('temp'),num=$('num'),numv=$('numv'),word=$('word'),hint=$('hint');
 const jumps=[$('j0'),$('j1'),$('j2')];
 let temp=+slider.value,p=0,shown=0,tw=null,lastTick=Math.round(temp/5);
 // The stage warms with the temperature: icy sky when cold, a glow of flame-core when hot.
@@ -438,11 +432,9 @@ function placeHint(){
 function hideHint(){hint.setAttribute('hidden','')}
 slider.addEventListener('input',()=>{tw=null;hideHint();setTemp(+slider.value)});
 function showState(s,announce,from){
-  badge.textContent=WORDS[s];
-  badge.classList.remove(...CHIP);badge.classList.add(CHIP[s]);
+  word.textContent=WORDS[s];
   slider.style.setProperty('--thumb',FILL[s]);
   jumps.forEach((j,i)=>j.setAttribute('aria-current',i===s?'true':'false'));
-  badge.classList.remove('pop');void badge.offsetWidth;badge.classList.add('pop');
   if(announce){event(from,s);PS.say(SAY[s],from===1&&s===0?650:500)}
 }
 const TARGET=[-15,45,112];
@@ -451,7 +443,6 @@ jumps.forEach((j,i)=>j.addEventListener('click',()=>{
   if(i===shown&&Math.abs(temp-TARGET[i])<40&&((i===0&&temp<=0)||(i===1&&temp>0&&temp<100)||(i===2&&temp>=100))){SIG[i]();PS.say(SAY[i],250);return}
   tw={from:temp,to:TARGET[i],t0:performance.now()/1000,dur:0.9};
 }));
-badge.addEventListener('click',()=>{SIG[shown]();PS.say(SAY[shown],200)});
 num.addEventListener('click',()=>{tick(temp);PS.say((temp<0?'minus ':'')+Math.abs(temp)+' degrees')});
 PS.sound.button($('sound'));
 
