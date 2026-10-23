@@ -1,0 +1,521 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Paint Mixer · Poke & See</title>
+<link rel="icon" href="../../kit/logo/poke-and-see-mark.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../kit/tokens.css">
+<link rel="stylesheet" href="../../kit/kit.css">
+<style>
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.app{height:100%;max-width:1100px;margin:0 auto;display:flex;flex-direction:column;gap:var(--space-3);
+  padding:max(var(--space-3),env(safe-area-inset-top,0px)) max(var(--space-4),env(safe-area-inset-right,0px)) max(var(--space-3),env(safe-area-inset-bottom,0px)) max(var(--space-4),env(safe-area-inset-left,0px));
+  user-select:none;-webkit-user-select:none}
+button{touch-action:manipulation}
+
+/* top bar: home, the colour word, sound */
+.top{display:flex;align-items:center;gap:var(--space-3)}
+.top .mid{flex:1;min-width:0;display:flex;align-items:center;justify-content:center}
+.top .ps-round{flex:none}
+.sound .off{display:none}
+.sound[aria-pressed="false"] .on{display:none}
+.sound[aria-pressed="false"] .off{display:block}
+.name{display:inline-flex;align-items:center;gap:var(--space-3);min-height:var(--target-min);min-width:var(--target-min);max-width:100%;
+  padding:6px var(--space-2) 0;background:none;border:0;color:var(--ink);cursor:pointer;font-family:var(--font-kid);font-weight:700;
+  font-size:40px;line-height:1;letter-spacing:.02em;text-align:left}
+.name[data-empty]{visibility:hidden}
+.name:focus-visible{outline:4px solid var(--focus);outline-offset:4px}
+.name svg{flex:none;width:44px;height:44px;margin-top:-6px}
+
+/* the World */
+.stage{flex:1 1 auto;min-height:280px;position:relative;border-radius:var(--radius-l);overflow:hidden;
+  background:linear-gradient(135deg,var(--card) 40%,var(--paper))}
+.stage canvas{position:absolute;inset:0;width:100%;height:100%;display:block;touch-action:none;cursor:grab}
+.hint{position:absolute;width:64px;height:40px;transform:translate(-50%,-50%);pointer-events:none;animation:nudge 1.1s ease-in-out infinite}
+@keyframes nudge{0%,100%{margin-left:-12px}50%{margin-left:12px}}
+
+/* clean the palette */
+.tools{display:flex;justify-content:center}
+.tools .ps-btn{min-width:min(100%,240px)}
+
+/* grown-ups corner */
+.foot{position:relative;display:flex}
+.foot .ps-panel{position:absolute;left:0;bottom:calc(100% + var(--space-2));z-index:5;width:min(34rem,100%)}
+
+@media (max-width:520px){
+  .name{font-size:28px;gap:var(--space-2)}
+  .name svg{width:32px;height:32px;margin-top:-4px}
+}
+@media (prefers-reduced-motion:reduce){.hint{animation:none}}
+</style>
+</head>
+<body>
+<main class="app">
+  <h1 class="sr">Paint mixer</h1>
+
+  <div class="top">
+    <a class="ps-round" href="../../" aria-label="Home">
+      <svg viewBox="0 0 48 48" aria-hidden="true"><path d="M8 23L24 9l16 14v16a2 2 0 0 1-2 2H29V30h-10v11H10a2 2 0 0 1-2-2z" fill="var(--sun)" stroke="var(--ink)" stroke-width="3.5" stroke-linejoin="round"/></svg>
+    </a>
+    <div class="mid">
+      <span class="sr" id="word" aria-live="polite"></span>
+      <button class="name" id="name" type="button" data-empty aria-label="Say the colour again">
+        <svg viewBox="0 0 48 48" aria-hidden="true"><path id="swatch" d="M24 6c11 0 18 7 18 17s-8 19-18 19S6 34 6 24 13 6 24 6z" fill="var(--paint-blue)" stroke="var(--ink)" stroke-width="3"/></svg>
+        <span id="namev"></span>
+      </button>
+    </div>
+    <button class="ps-round sound" id="sound" type="button" aria-pressed="true" aria-label="Sound">
+      <svg class="on" viewBox="0 0 48 48" aria-hidden="true"><path d="M7 18h8l11-9v30l-11-9H7z" fill="var(--ink)"/><path d="M32 17c3 4 3 10 0 14M37 12c6 7 6 17 0 24" stroke="var(--ink)" stroke-width="4" fill="none" stroke-linecap="round"/></svg>
+      <svg class="off" viewBox="0 0 48 48" aria-hidden="true"><path d="M7 18h8l11-9v30l-11-9H7z" fill="var(--ink)"/><path d="M32 18l10 12M42 18L32 30" stroke="var(--ink)" stroke-width="4" stroke-linecap="round"/></svg>
+    </button>
+  </div>
+
+  <div class="stage" id="stage">
+    <canvas id="cv" role="img" aria-label="A paint palette. Red, yellow, blue, pink, white and black paint sit along the top. Drag paint out, then squish two blobs together to mix a new colour."></canvas>
+    <svg class="hint" id="hint" viewBox="0 0 64 40" aria-hidden="true"><path d="M4 14h32V5l24 15-24 15v-9H4z" fill="var(--sun)" stroke="var(--ink)" stroke-width="4" stroke-linejoin="round"/></svg>
+  </div>
+
+  <div class="tools">
+    <button class="ps-btn" id="clean" type="button">
+      <svg viewBox="0 0 48 48" aria-hidden="true"><rect x="6" y="14" width="36" height="22" rx="7" fill="var(--sand)" stroke="var(--ink)" stroke-width="3.5"/><g fill="var(--ink)" opacity=".35"><circle cx="15" cy="22" r="2.5"/><circle cx="25" cy="27" r="3"/><circle cx="34" cy="21" r="2"/><circle cx="33" cy="30" r="2.2"/><circle cx="16" cy="30" r="1.8"/></g></svg>CLEAN</button>
+  </div>
+
+  <div class="foot">
+    <button class="ps-grownups" id="gu" type="button" aria-expanded="false" aria-controls="gupanel">
+      <svg viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="17" fill="var(--card)" stroke="var(--ink-soft)" stroke-width="3.5"/><circle cx="24" cy="16" r="2.6" fill="var(--ink-soft)"/><path d="M24 22v11" stroke="var(--ink-soft)" stroke-width="4" stroke-linecap="round"/></svg>For grown-ups</button>
+    <div class="ps-panel" id="gupanel" hidden>
+      <p class="ps-label">The science</p>
+      <h3>Paint Mixer</h3>
+      <p>Paint soaks up some colours of light and bounces the rest back to your eyes. When you mix paints, more light gets soaked up, so blue and yellow leave only green.</p>
+      <p>Coloured light works differently: mixing light adds light instead of soaking it up. Red and green light make yellow.</p>
+      <p class="ps-ask">Ask: what do you think red and green paint will make? (Try it: it's brown.)</p>
+    </div>
+  </div>
+</main>
+
+<script src="../../kit/kit.js"></script>
+<script src="../../kit/vendor/spectral/spectral.js"></script>
+<script>
+(function(){
+const T=PS.token;
+const INK=T('ink'),CARD=T('card'),PAPER=T('paper');
+const reduce=PS.reducedMotion;
+const $=id=>document.getElementById(id);
+const cl=(x,a=0,b=1)=>x<a?a:x>b?b:x;
+const ease=x=>x*x*(3-2*x);
+function rgb(c){if(c[0]==='#'){c=c.slice(1);return[0,2,4].map(i=>parseInt(c.slice(i,i+2),16))}return c.match(/[\d.]+/g).slice(0,3).map(Number)}
+// Plain RGB blending is only for light and shade on the canvas. Paint itself always mixes with spectral.js.
+function shade(a,b,t){const x=rgb(a),y=rgb(b);return'rgb('+x.map((v,i)=>Math.round(v+(y[i]-v)*t)).join(',')+')'}
+function alpha(c,a){return'rgba('+rgb(c).join(',')+','+a+')'}
+const FLOAT=(T('float').match(/[\d.]+/g)||[0,12,28,27,35,51,0.14]).map(Number);
+
+/* ---------- paint ---------- */
+const PIG=['red','yellow','blue','pink','white','black'];
+const HEX={},PURE={};
+PIG.forEach(p=>{HEX[p]=T('paint-'+p);PURE[p]=new spectral.Color(HEX[p])});
+// Kubelka-Munk mixing of the pure pigments, weighted by how much of each is in the blob.
+function mixHex(comp){
+  const parts=PIG.filter(p=>comp[p]>1e-6);
+  if(parts.length===1)return HEX[parts[0]];
+  return spectral.mix(...parts.map(p=>[PURE[p],comp[p]])).toString();
+}
+// Name a mix by its lightness (L), colourfulness (C) and hue (h) in OKLCh: the hue picks the family,
+// then light and dark pick the shade (navy, maroon, lilac...). Tuned against every mix of up to six dollops.
+function colourWord(L,C,h){
+  if(L<0.27)return'BLACK';
+  if(C<(L>0.85?0.018:0.025))return L>0.95?'WHITE':L<0.32?'BLACK':'GREY';
+  if(h>=345||h<36){                       // reds, from the purple side round to the orange side
+    const r=h>=345?h-360:h;
+    if(L>0.66)return'PINK';
+    if(r<0&&C<0.08)return L<0.48?'PLUM':'PURPLE';
+    if(r<5)return L<0.45?'PLUM':'PINK';     // bright pinks and magentas, from the pink paint
+    if(r>=20&&C<0.11)return L>0.6&&C<0.09?'TAN':'BROWN';
+    if(L<0.45)return r<8?'PLUM':'MAROON';
+    if(C<0.11)return L>0.55?'PINK':'MAROON';
+    return'RED';
+  }
+  if(h<72){                               // oranges
+    if(L>0.8)return C<0.07?'TAN':'PEACH';
+    if(L<0.55||C<0.1||(L<0.62&&C<0.14))return L>0.7?'TAN':'BROWN';
+    return'ORANGE';
+  }
+  if(h<125){                              // yellows, then yellow-greens
+    if(L>0.9)return C<0.05?'CREAM':'YELLOW';
+    if(h>=105)return L<0.68||C<0.1?'OLIVE':'LIME';
+    if(L<0.7)return h<95?'BROWN':'OLIVE'; // yellow and black really do make an olive green
+    return C<0.1?'TAN':'YELLOW';
+  }
+  if(h<152)return'GREEN';
+  if(h<222)return'TEAL';                  // blue-greens
+  if(h<278)return L>0.68?'LIGHT BLUE':L<0.36?'NAVY':'BLUE';
+  if(h>=325)return L>0.66?'PINK':'PURPLE'; // pink-side purples: pale ones read as pink, not lilac
+  return L>0.66?'LILAC':'PURPLE';
+}
+function nameFor(comp,hex){
+  const parts=PIG.filter(p=>comp[p]>1e-6);
+  if(parts.length===1)return parts[0].toUpperCase();
+  const [L,C,h]=new spectral.Color(hex).OKLCh;
+  return colourWord(L,C,h);
+}
+const neckMix=new Map();
+function midHex(a,b){const k=a+b;if(!neckMix.has(k))neckMix.set(k,spectral.mix([new spectral.Color(a),1],[new spectral.Color(b),1]).toString());return neckMix.get(k)}
+
+/* ---------- blobs ---------- */
+// REACH: how close two blobs must be for the goo to reach across. Let go inside it and they mix.
+const N=28,MAXA=6,MAXLOOSE=16,REACH=1.2;
+let W=0,H=0,dpr=1,R1=36,wellR=40,trayTop=8,trayBot=100;
+let blobs=[],wells=[];
+function setPaint(b){
+  b.hex=mixHex(b.comp);b.word=nameFor(b.comp,b.hex);
+  b.lite=shade(b.hex,CARD,0.35);b.edge=shade(b.hex,INK,0.3);
+}
+// Every dollop of paint has its own lumpy resting shape.
+function lumps(){
+  const f=new Float32Array(N),m=[[2,.06],[3,.045],[4,.03],[5,.018]].map(([k,a])=>[k,a*(0.6+Math.random()*0.8),Math.random()*6.28]);
+  for(let i=0;i<N;i++){const th=i/N*6.2832;for(const [k,a,ph] of m)f[i]+=a*Math.cos(k*th+ph)}
+  return f;
+}
+// Change shape without a jump: the soft body springs from the old outline to the new one.
+function reshape(b){const nb=lumps();for(let i=0;i<N;i++)b.d[i]+=b.base[i]-nb[i];b.base=nb}
+function blob(comp,x,y,amount){
+  const b={x,y,comp:Object.fromEntries(PIG.map(p=>[p,comp[p]||0])),amount,r:R1*Math.sqrt(amount),base:lumps(),d:new Float32Array(N),dv:new Float32Array(N),
+    sx:0,sy:0,lift:0,held:false,src:null,merge:null,swirl:null,fade:0,well:false};
+  setPaint(b);return b;
+}
+const rT=b=>b.well?wellR:R1*Math.sqrt(b.amount);
+function jiggle(b,s){if(reduce)return;const ph=Math.random()*6.28;for(let i=0;i<N;i++){const th=i/N*6.2832;b.dv[i]+=s*(Math.cos(2*th+ph)+0.5*Math.cos(3*th-ph))}}
+function squash(b,s){if(reduce)return;for(let i=0;i<N;i++)b.dv[i]-=s}
+function soft(b,dt){
+  const d=b.d,v=b.dv;
+  for(let i=0;i<N;i++){
+    const a=-320*d[i]-9*v[i]+180*(d[(i+N-1)%N]+d[(i+1)%N]-2*d[i]);
+    v[i]+=a*dt;
+  }
+  for(let i=0;i<N;i++)d[i]=cl(d[i]+v[i]*dt,-0.28,0.28);
+}
+
+/* ---------- layout ---------- */
+const stage=$('stage'),cv=$('cv'),ctx=cv.getContext('2d'),hint=$('hint');
+function resize(){
+  const w=stage.clientWidth,h=stage.clientHeight;if(!w||!h)return;
+  const fx=W?w/W:1,fy=H?h/H:1;
+  W=w;H=h;dpr=Math.min(devicePixelRatio||1,2);
+  cv.width=Math.round(W*dpr);cv.height=Math.round(H*dpr);
+  R1=cl(Math.min(W,H)*0.09,26,52);
+  // The wells and their tray always fit the width. One row if each well still gets a 64px+ slot,
+  // otherwise two rows of three (red, yellow, blue on top).
+  const fit=cols=>Math.min((W-48)/(cols-1+0.864),R1*3.6);
+  const cols=fit(PIG.length)>=68?PIG.length:Math.ceil(PIG.length/2),gap=fit(cols);
+  wellR=Math.min(gap*0.36,R1*1.1);
+  trayTop=12;const wy=trayTop+10+wellR*1.2,rowH=wellR*2.4+8;
+  trayBot=wy+(Math.ceil(PIG.length/cols)-1)*rowH+wellR*1.2+10;
+  if(!wells.length)wells=PIG.map(p=>{const b=blob({[p]:1},0,0,1);b.well=true;return b});
+  wells.forEach((b,i)=>{b.x=W/2+(i%cols-(cols-1)/2)*gap;b.y=wy+Math.floor(i/cols)*rowH;b.r=wellR});
+  for(const b of blobs){b.x*=fx;b.y*=fy;b.r=rT(b)}
+  placeHint();
+}
+new ResizeObserver(resize).observe(stage);
+
+/* ---------- drawing ---------- */
+function circle(x,y,r){ctx.beginPath();ctx.arc(x,y,r,0,6.2832)}
+function rr(x,y,w,h,r){ctx.beginPath();ctx.moveTo(x+r,y);ctx.arcTo(x+w,y,x+w,y+h,r);ctx.arcTo(x+w,y+h,x,y+h,r);ctx.arcTo(x,y+h,x,y,r);ctx.arcTo(x,y,x+w,y,r);ctx.closePath()}
+// The blob outline: a wobbly ring of points, stretched along the way it's being dragged.
+function outline(b){
+  const sp=Math.hypot(b.sx,b.sy),st=reduce?0:cl(sp/2600,0,0.2),phi=Math.atan2(b.sy,b.sx);
+  const k=1-b.fade,P=[];
+  for(let i=0;i<N;i++){
+    const th=i/N*6.2832,rho=b.r*k*(1+b.base[i]+b.d[i])*(1+st*Math.cos(2*(th-phi)))/(1+st*0.5);
+    P.push([b.x+Math.cos(th)*rho,b.y+Math.sin(th)*rho]);
+  }
+  ctx.beginPath();
+  let m=[(P[N-1][0]+P[0][0])/2,(P[N-1][1]+P[0][1])/2];ctx.moveTo(m[0],m[1]);
+  for(let i=0;i<N;i++){const p=P[i],q=P[(i+1)%N];ctx.quadraticCurveTo(p[0],p[1],(p[0]+q[0])/2,(p[1]+q[1])/2)}
+  ctx.closePath();
+}
+function drawBlob(b){
+  const r=b.r*(1-b.fade);if(r<1)return;
+  ctx.save();
+  if(b.fade)ctx.globalAlpha=1-b.fade;
+  // shadow: resting paint sits close to the palette, lifted paint floats
+  const L=b.lift;
+  ctx.shadowColor='rgba('+FLOAT.slice(3,6).join(',')+','+(0.1+L*(FLOAT[6]-0.1+0.06))+')';
+  ctx.shadowOffsetY=2+L*(FLOAT[1]-2);ctx.shadowBlur=6+L*(FLOAT[2]-6);
+  outline(b);ctx.fillStyle=b.hex;ctx.fill();
+  ctx.shadowColor='transparent';
+  ctx.clip();
+  if(b.swirl){
+    // The two old colours stirred in, fading as they become one.
+    const u=b.swirl.t,f=(1-u)**1.4,turn=reduce?0:ease(u)*3.6;
+    ctx.lineCap='round';
+    for(let k=0;k<6;k++){
+      ctx.globalAlpha=f*(1-b.fade);ctx.strokeStyle=k%2?b.swirl.a:b.swirl.b;
+      ctx.lineWidth=r*(0.26-0.12*u);
+      const rad=r*(0.12+0.15*k),a0=k*1.9+turn*(1.4-k*0.15);
+      ctx.beginPath();ctx.arc(b.x,b.y,rad,a0,a0+2.2+0.25*k);ctx.stroke();
+    }
+    ctx.globalAlpha=1-b.fade;
+  }
+  // A flat mound of paint, lit from the top left: a soft lit side, and the edge darkening where it curves down to the palette.
+  const g=ctx.createLinearGradient(b.x-r,b.y-r,b.x+r,b.y+r);
+  g.addColorStop(0,alpha(CARD,0.2));g.addColorStop(0.45,alpha(CARD,0));g.addColorStop(1,alpha(INK,0.12));
+  ctx.fillStyle=g;ctx.fillRect(b.x-r*1.5,b.y-r*1.5,r*3,r*3);
+  const e=ctx.createRadialGradient(b.x-r*0.15,b.y-r*0.2,r*0.6,b.x,b.y,r*1.2);
+  e.addColorStop(0,alpha(INK,0));e.addColorStop(1,alpha(INK,0.2));
+  ctx.fillStyle=e;ctx.fillRect(b.x-r*1.5,b.y-r*1.5,r*3,r*3);
+  ctx.restore();
+  ctx.save();if(b.fade)ctx.globalAlpha=1-b.fade;
+  outline(b);ctx.strokeStyle=b.edge;ctx.lineWidth=parseFloat(T('stroke-object'))||2;ctx.stroke();
+  // wet shine: a streak along the lit edge and a small glint
+  ctx.lineCap='round';ctx.strokeStyle=alpha(CARD,0.55);ctx.lineWidth=Math.max(2,r*0.1);
+  ctx.beginPath();ctx.arc(b.x,b.y,r*0.68,Math.PI*1.06,Math.PI*1.36);ctx.stroke();
+  ctx.fillStyle=alpha(CARD,0.5);circle(b.x-r*0.02,b.y-r*0.64,Math.max(1.5,r*0.055));ctx.fill();
+  ctx.restore();
+}
+// A gooey bridge between two blobs (metaball). v near 0.5 is a fat neck; near 0 it's a thin string.
+function neck(a,b,v,ca,cb){
+  const r1=a.r*(1-a.fade),r2=b.r*(1-b.fade),dx=b.x-a.x,dy=b.y-a.y,d=Math.hypot(dx,dy);
+  if(d<=Math.abs(r1-r2)+1||r1<2||r2<2)return;
+  let u1=0,u2=0;
+  if(d<r1+r2){u1=Math.acos(cl((r1*r1+d*d-r2*r2)/(2*r1*d),-1,1));u2=Math.acos(cl((r2*r2+d*d-r1*r1)/(2*r2*d),-1,1))}
+  const an=Math.atan2(dy,dx),spread=Math.acos(cl((r1-r2)/d,-1,1)),H2=Math.PI/2;
+  const a1=an+u1+(spread-u1)*v,a2=an-u1-(spread-u1)*v;
+  const a3=an+Math.PI-u2-(Math.PI-u2-spread)*v,a4=an-Math.PI+u2+(Math.PI-u2-spread)*v;
+  const P=(c,t,r)=>[c[0]+Math.cos(t)*r,c[1]+Math.sin(t)*r];
+  const A=[a.x,a.y],B=[b.x,b.y];
+  const p1=P(A,a1,r1),p2=P(A,a2,r1),p3=P(B,a3,r2),p4=P(B,a4,r2);
+  const tot=r1+r2,d2=Math.min(v*2.4,Math.hypot(p1[0]-p3[0],p1[1]-p3[1])/tot)*Math.min(1,d*2/tot);
+  const h1=P(p1,a1-H2,r1*d2),h2=P(p2,a2+H2,r1*d2),h3=P(p3,a3+H2,r2*d2),h4=P(p4,a4-H2,r2*d2);
+  ctx.beginPath();ctx.moveTo(p1[0],p1[1]);ctx.bezierCurveTo(h1[0],h1[1],h3[0],h3[1],p3[0],p3[1]);
+  ctx.lineTo(p4[0],p4[1]);ctx.bezierCurveTo(h4[0],h4[1],h2[0],h2[1],p2[0],p2[1]);ctx.closePath();
+  if(ca===cb)ctx.fillStyle=ca;
+  else{const g=ctx.createLinearGradient(a.x,a.y,b.x,b.y);g.addColorStop(0.15,ca);g.addColorStop(0.5,midHex(ca,cb));g.addColorStop(0.85,cb);ctx.fillStyle=g}
+  ctx.fill();
+}
+const neckV=(a,b,far)=>{const d=Math.hypot(b.x-a.x,b.y-a.y),t=a.r+b.r;return 0.5*(1-cl((d-t*0.8)/(t*(far-0.8))))+0.04};
+
+function draw(){
+  ctx.setTransform(dpr,0,0,dpr,0,0);ctx.clearRect(0,0,W,H);
+  ctx.lineJoin='round';
+  /* the paint tray: five shallow wells along the top */
+  const xs=wells.map(w=>w.x),x0=Math.min(...xs)-wellR*1.2-12,x1=Math.max(...xs)+wellR*1.2+12;
+  rr(x0,trayTop,x1-x0,trayBot-trayTop,Math.min(28,(trayBot-trayTop)/2));ctx.fillStyle=PAPER;ctx.fill();
+  for(const w of wells){
+    const R=wellR*1.2,g=ctx.createLinearGradient(w.x-R,w.y-R,w.x+R,w.y+R);
+    g.addColorStop(0,shade(PAPER,INK,0.16));g.addColorStop(1,CARD);
+    circle(w.x,w.y,R);ctx.fillStyle=g;ctx.fill();
+  }
+  /* goo */
+  for(const b of blobs){
+    if(b.src)neck(b.src,b,neckV(b.src,b,1.7),b.src.hex,b.hex);
+    if(b.merge)neck(b,b.merge.into,0.5,b.hex,b.merge.into.hex);
+    if(b.near)neck(b,b.near,neckV(b,b.near,REACH),b.hex,b.near.hex);
+  }
+  for(const w of wells)drawBlob(w);
+  for(const b of blobs)if(!b.held)drawBlob(b);
+  for(const b of blobs)if(b.held)drawBlob(b);
+}
+
+/* ---------- sound (engine in kit/kit.js) ---------- */
+const {tone,noise}=PS.sound;
+const snd={
+  grab(){noise(0.12,{type:'lowpass',f:700,to:300,vol:0.14});tone(170,0.1,{vol:0.1,to:120})},
+  plip(){tone(480,0.09,{vol:0.13,to:1100});noise(0.04,{f:2500,q:3,vol:0.05})},
+  back(){tone(760,0.12,{vol:0.1,to:360})},
+  pat(){noise(0.08,{type:'lowpass',f:500,vol:0.13});tone(130,0.08,{vol:0.08,to:90})},
+  // the mixing signature: a wet squelch that swirls up
+  squish(){noise(0.38,{f:260,to:1100,q:3,vol:0.24,att:0.04});tone(180,0.32,{vol:0.1,to:260});tone(320,0.2,{vol:0.06,delay:0.22,to:520})},
+  wipe(){noise(0.6,{f:2400,to:500,q:0.8,vol:0.22,att:0.12});noise(0.5,{f:1800,to:400,q:0.8,vol:0.14,att:0.1,delay:0.25})}
+};
+const lower=w=>w.toLowerCase();
+const cap=s=>s[0].toUpperCase()+s.slice(1);
+
+/* ---------- the colour word ---------- */
+const nameBtn=$('name'),namev=$('namev'),swatch=$('swatch'),word=$('word');
+let lastSay='';
+function show(b,say,delay=0){
+  namev.textContent=b.word;swatch.setAttribute('fill',b.hex);nameBtn.removeAttribute('data-empty');
+  word.textContent=b.word;lastSay=say;PS.say(say,delay);
+}
+nameBtn.addEventListener('click',()=>{if(lastSay){PS.sound.tok();PS.say(lastSay)}});
+
+/* ---------- hands ---------- */
+const drags=new Map();
+let hintOn=true;
+function placeHint(){
+  if(!hintOn||blobs.length<2)return;
+  const [a,b]=blobs;
+  hint.style.left=((a.x+b.x)/2)+'px';hint.style.top=((a.y+b.y)/2)+'px';
+}
+function hideHint(){hintOn=false;hint.setAttribute('hidden','')}
+function at(e){const r=cv.getBoundingClientRect();return[e.clientX-r.left,e.clientY-r.top]}
+const busy=b=>b.held||b.merge||b.fade||b.src;
+function hit(x,y){
+  for(let i=blobs.length-1;i>=0;i--){const b=blobs[i];if(!busy(b)&&Math.hypot(b.x-x,b.y-y)<Math.max(b.r,34))return b}
+  let best=null,bd=Math.max(wellR*1.2,34);
+  for(const w of wells){const d=Math.hypot(w.x-x,w.y-y);if(d<bd){bd=d;best=w}}
+  return best;
+}
+const loose=()=>blobs.filter(b=>!b.fade).length;
+cv.addEventListener('pointerdown',e=>{
+  const [x,y]=at(e),h=hit(x,y);if(!h)return;
+  e.preventDefault();try{cv.setPointerCapture(e.pointerId)}catch(err){}hideHint();
+  let g;
+  if(h.well||h.amount>=2){
+    if(loose()>=MAXLOOSE){jiggle(h,0.6);snd.back();return}
+    // Pull a dollop off: one unit of the same paint, joined by goo until it snaps free.
+    const unit={};for(const p of PIG)unit[p]=h.well?h.comp[p]:h.comp[p]/h.amount;
+    const d=blob(unit,h.x,h.y,1);d.src=h;d.held=true;blobs.push(d);
+    g={b:d,src:h,ox:0,oy:0};
+  }else{
+    blobs.splice(blobs.indexOf(h),1);blobs.push(h);h.held=true;
+    g={b:h,src:null,ox:h.x-x,oy:h.y-y};
+  }
+  Object.assign(g,{x0:x,y0:y,tx:x+g.ox,ty:y+g.oy,moved:false,tick:0});
+  drags.set(e.pointerId,g);
+  squash(h,1.2);snd.grab();
+});
+cv.addEventListener('pointermove',e=>{
+  const g=drags.get(e.pointerId);if(!g)return;
+  const [x,y]=at(e);
+  g.tx=cl(x+g.ox,0,W);g.ty=cl(y+g.oy,0,H);
+  if(!g.moved&&Math.hypot(x-g.x0,y-g.y0)>10)g.moved=true;
+});
+function release(e){
+  const g=drags.get(e.pointerId);if(!g)return;
+  drags.delete(e.pointerId);
+  const b=g.b;b.held=false;b.near=null;
+  if(g.moved&&!b.src){b.x=g.tx;b.y=g.ty}
+  if(!g.moved){
+    // A tap: say the colour.
+    const t=g.src||b;
+    if(g.src){blobs.splice(blobs.indexOf(b),1)}
+    PS.sound.tok();jiggle(t,1.4);show(t,cap(lower(t.word)));
+    return;
+  }
+  if(b.src){b.merge={into:b.src,t:0,x0:b.x,y0:b.y,back:true};b.src=null;snd.back();return}
+  // Dropped on paint? Squish them together.
+  let best=null,bd=1e9;
+  for(const o of blobs){
+    if(o===b||busy(o))continue;
+    const d=Math.hypot(o.x-b.x,o.y-b.y);
+    if(d<(o.r+b.r)*REACH&&d<bd){bd=d;best=o}
+  }
+  // A pure dollop dropped back on its own well goes back in.
+  for(const w of wells){
+    if(Math.hypot(w.x-b.x,w.y-b.y)<wellR+b.r*0.6&&b.amount===1&&b.hex===w.hex){best=w;break}
+  }
+  if(best){b.merge={into:best,t:0,x0:b.x,y0:b.y,back:best.well};return}
+  snd.pat();squash(b,0.8);
+}
+cv.addEventListener('pointerup',release);
+cv.addEventListener('pointercancel',release);
+cv.addEventListener('lostpointercapture',release);
+
+function mixInto(a,b){
+  const wa=a.word,wb=b.word,old=b.hex;
+  for(const p of PIG)b.comp[p]+=a.comp[p];
+  const tot=b.amount+a.amount;
+  if(tot>MAXA)for(const p of PIG)b.comp[p]*=MAXA/tot;
+  b.amount=Math.min(tot,MAXA);
+  setPaint(b);
+  if(b.hex!==old)b.swirl={a:a.hex,b:old,t:0};
+  blobs.splice(blobs.indexOf(a),1);
+  reshape(b);jiggle(b,2.2);snd.squish();
+  show(b,wa===wb?cap(lower(b.word)):cap(lower(wa))+' and '+lower(wb)+' make '+lower(b.word),550);
+}
+
+/* ---------- clean the palette ---------- */
+$('clean').addEventListener('click',()=>{
+  hideHint();
+  for(const [id,g] of drags){g.b.held=false;try{cv.releasePointerCapture(id)}catch(e){}}
+  drags.clear();
+  if(!blobs.length){PS.sound.tok();wells.forEach(w=>jiggle(w,1));return}
+  for(const b of blobs){b.fade=b.fade||0.001;b.src=null;b.near=null;b.merge=null}
+  snd.wipe();wells.forEach(w=>jiggle(w,0.8));
+  nameBtn.setAttribute('data-empty','');lastSay='';
+  word.textContent='Clean';PS.say('Clean',350);
+});
+
+/* grown-ups corner: same button or a tap outside closes it */
+const gu=$('gu'),gup=$('gupanel');
+function guOpen(o){gup.hidden=!o;gu.setAttribute('aria-expanded',o?'true':'false')}
+gu.addEventListener('click',()=>{PS.sound.tok();guOpen(gup.hidden)});
+document.addEventListener('pointerdown',e=>{if(!gup.hidden&&!gup.contains(e.target)&&!gu.contains(e.target))guOpen(false)});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!gup.hidden){guOpen(false);gu.focus()}});
+PS.sound.button($('sound'));
+
+/* ---------- physics ---------- */
+function step(dt){
+  for(const [,g] of drags){
+    const b=g.b,px=b.x,py=b.y,k=Math.min(1,dt*24);
+    b.x+=(g.tx-b.x)*k;b.y+=(g.ty-b.y)*k;
+    const vx=(b.x-px)/dt,vy=(b.y-py)/dt;b.sx+=(vx-b.sx)*Math.min(1,dt*10);b.sy+=(vy-b.sy)*Math.min(1,dt*10);
+    if(b.src){
+      // stretching the goo: ticks rise as it thins, then it snaps free
+      const s=b.src,f=Math.hypot(b.x-s.x,b.y-s.y)/((s.r+b.r)*1.7);
+      const tk=Math.floor(f*4);if(tk>g.tick&&tk<4){g.tick=tk;PS.sound.tick(tk/4)}
+      if(f>=1){
+        b.src=null;g.src=null;g.moved=true;snd.plip();jiggle(s,1.6);jiggle(b,1.6);
+        if(!s.well){
+          for(const p of PIG)s.comp[p]*=(s.amount-1)/s.amount;
+          s.amount-=1;reshape(s);
+        }
+        show(b,cap(lower(b.word)));
+      }
+    }else{
+      // reaching for nearby paint
+      let near=null,nd=1e9;
+      for(const o of blobs){if(o===b||busy(o))continue;const d=Math.hypot(o.x-b.x,o.y-b.y);if(d<(o.r+b.r)*REACH&&d<nd){nd=d;near=o}}
+      b.near=near;
+    }
+  }
+  for(let i=blobs.length-1;i>=0;i--){
+    const b=blobs[i];
+    if(b.merge){
+      const m=b.merge;m.t+=dt/0.32;const u=ease(cl(m.t)),o=m.into;
+      b.x=m.x0+(o.x-m.x0)*u;b.y=m.y0+(o.y-m.y0)*u;b.r=R1*Math.sqrt(b.amount)*(1-0.5*u);
+      if(m.t>=1){
+        if(!o.well&&!blobs.includes(o)){b.merge=null;continue} // its partner got mixed away first
+        if(m.back){blobs.splice(i,1);jiggle(o,1.4);if(o.well)snd.back()}
+        else mixInto(b,o);
+      }
+      continue;
+    }
+    if(b.fade){b.fade=Math.min(1,b.fade+dt/0.5);if(b.fade>=1)blobs.splice(i,1);continue}
+  }
+  for(const b of blobs.concat(wells)){
+    if(!b.merge){const t=rT(b);b.r+=(t-b.r)*Math.min(1,dt*8)}
+    b.lift+=((b.held?1:0)-b.lift)*Math.min(1,dt*12);
+    if(!b.held){b.sx*=Math.max(0,1-dt*8);b.sy*=Math.max(0,1-dt*8)}
+    if(b.swirl){b.swirl.t+=dt/1.4;if(b.swirl.t>=1)b.swirl=null}
+    soft(b,dt);
+  }
+  // Resting paint makes room: blobs nudge apart and stay on the palette, below the tray.
+  const free=blobs.filter(b=>!busy(b));
+  for(let i=0;i<free.length;i++)for(let j=i+1;j<free.length;j++){
+    const a=free[i],b=free[j],dx=b.x-a.x,dy=b.y-a.y,d=Math.hypot(dx,dy)||0.01,min=a.r+b.r+6;
+    if(d<min){const o=(min-d)*Math.min(1,dt*6)/2,nx=dx/d,ny=dy/d;a.x-=nx*o;a.y-=ny*o;b.x+=nx*o;b.y+=ny*o}
+  }
+  for(const b of free){
+    const k=Math.min(1,dt*8),m=6;
+    const x=cl(b.x,b.r+m,W-b.r-m),y=cl(b.y,trayBot+b.r+m,H-b.r-m);
+    b.x+=(x-b.x)*k;b.y+=(y-b.y)*k;
+  }
+}
+
+/* ---------- loop ---------- */
+let last=performance.now();
+function frame(ms){
+  const dt=Math.min(1/30,Math.max(0.001,(ms-last)/1000));last=ms;
+  if(W&&H){step(dt);draw()}
+  requestAnimationFrame(frame);
+}
+resize();
+// Start with blue and yellow on the palette, and an arrow to show what to try.
+{const y=(trayBot+H)/2+R1*0.3,dx=Math.min(W*0.32,Math.max(W*0.16,R1*2.8));blobs.push(blob({blue:1},W/2-dx,y,1),blob({yellow:1},W/2+dx,y,1));placeHint()}
+requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>

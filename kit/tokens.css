@@ -49,6 +49,7 @@
   --lens: #18213A; /* Inside the magnifier: the dark ground that zoomed-in views sit on. */
   --lens-water: #2A3F86; /* Liquid region inside the magnifier. */
   --paint-red: #D1242B; /* Paint Mixer red, a cadmium-like red. */
+  --paint-pink: #E5338C; /* Paint Mixer pink, a deep rose-like pink. Pink + blue must make a real purple. */
   --paint-yellow: #F5C518; /* Paint Mixer yellow. Blue + yellow must make a real green. */
   --paint-blue: #1D3F9E; /* Paint Mixer blue, ultramarine-like. */
   --paint-white: #FAFAF6; /* Paint Mixer white, for tints. */

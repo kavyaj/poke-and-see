@@ -13,16 +13,27 @@ Kit pass (done 23 October 2026):
   "Heat makes water molecules move faster. At 0°C they let go of each other and ice melts. At 100°C they move fast enough to fly apart as steam." Ask: "What happens to a puddle on a hot day?"
 - Move the sound and speech code into `kit/kit.js`.
 
-## 2. Paint Mixer (next, top priority)
+## 2. Paint Mixer (built 23 October 2026, grown-ups copy waiting for Kavya)
 
 Squish two paint blobs together. A new colour appears and its name is spoken.
 
-- Pigments: `--paint-red`, `--paint-yellow`, `--paint-blue`, `--paint-white`, `--paint-black`.
+- Pigments: `--paint-red`, `--paint-yellow`, `--paint-blue`, `--paint-pink`, `--paint-white`, `--paint-black`.
 - Mix with spectral.js (MIT) so blue + yellow makes a real green. Never average RGB.
 - Name the result with a small fixed list of colour words a 3-year-old knows (green, orange, purple, brown, pink, grey, light blue...), picked by nearest colour.
 - Reversible: a "clean the palette" button, and blobs can be pulled apart again.
 
-## 3. Sun and Shadow
+As built:
+- The six pigments sit in wells along the top and never run out: one row on tablets, two rows of three on phones (red, yellow, blue on top) so every well stays at least 64px to tap. Drag from a well and a dollop stretches out on a string of goo, then snaps free.
+- Drop paint onto paint (anywhere the goo reaches across) and they squish together. The old colours swirl and settle into the mix, then it's spoken: "Blue and yellow make green."
+- Paint is mixed by amount, so a big white blob with a little blue makes light blue. Blobs grow as they mix, up to six dollops.
+- Pulling apart: drag from a mixed blob to pull off one dollop. It keeps the mixed colour, because real paint doesn't unmix. A pure dollop dropped back on its own well goes back in. CLEAN wipes the palette.
+- Tap any blob to hear its colour. The top bar shows the last colour word with a swatch; tap it to hear it again.
+- Colour words: RED, MAROON, PLUM, PINK, ORANGE, PEACH, BROWN, TAN, YELLOW, CREAM, OLIVE, LIME, GREEN, TEAL, BLUE, NAVY, LIGHT BLUE, PURPLE, LILAC, GREY, WHITE, BLACK. Picked by hue first, then lightness and colourfulness for the shade, and checked by eye against every mix of up to six dollops.
+- Real results worth knowing: blue + green makes teal, red + blue makes a dark plum (cadmium red and ultramarine can't make a bright purple), pink + blue makes a real purple, yellow + black makes olive, red + green makes brown.
+- Pink (`--paint-pink`, #E5338C) was added on 23 October 2026 as the sixth paint so purple can be made. Picked from twelve deep pinks for the most colourful purple with blue, and lighter than red so the two are easy to tell apart.
+- spectral.js 3.0.0 is vendored in `kit/vendor/spectral/` with its licence.
+
+## 3. Sun and Shadow (next)
 
 Drag the sun across the sky. A tree's shadow stretches, shrinks and flips sides. Drag it below the horizon and it's night (`--sky-night`, `--star`).
 
