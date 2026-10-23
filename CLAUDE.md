@@ -9,6 +9,7 @@ Owner: Kavya. She writes the copy and makes the product calls. Ask her before ch
 - `docs/brand.md` is the brand book: principles, colour, type, motion, sound, toy anatomy. Follow it exactly.
 - `docs/roadmap.md` is the toy list in build order, with notes per toy.
 - The live design system (tokens, components with previews, logos, icons) is the Claude artifact "Poke & See": https://claude.ai/artifact/ADDj6DcG6rJ8TA2nX7U2Tv. `kit/` in this repo is generated from it. If the two disagree, ask Kavya which wins.
+- `index.html` has two halves: the toy tiles on top (for kids), then the For grown-ups section (the philosophy in Kavya's words). Keep the toys first. When a toy ships, add its tile and its real-world twin.
 
 ## The foundation: respect the kid
 

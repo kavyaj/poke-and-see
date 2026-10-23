@@ -4,31 +4,115 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Poke & See</title>
-<meta name="description" content="Tiny science toys for kids aged 3 to 5. Poke something, see what happens. No ads, no accounts, no tracking.">
+<meta name="description" content="Tiny science toys for kids aged 3 to 5. Poke something, see what happens. Mindfully made: no ads, no accounts, no tracking.">
 <link rel="icon" href="kit/logo/poke-and-see-mark.svg" type="image/svg+xml">
 <link rel="stylesheet" href="kit/tokens.css">
 <link rel="stylesheet" href="kit/kit.css">
 <style>
-  .home { max-width: 1080px; margin: 0 auto; min-height: 100%; display: flex; flex-direction: column; gap: var(--space-8);
-    padding-block: max(var(--space-8), env(safe-area-inset-top, 0px)) var(--space-8);
+  /* About: one reading column for grown-ups, with a few Frame moments. */
+  .about { max-width: 1080px; margin: 0 auto;
+    padding-block: max(var(--space-6), env(safe-area-inset-top, 0px)) var(--space-12);
     padding-left: max(var(--space-4), env(safe-area-inset-left, 0px)); padding-right: max(var(--space-4), env(safe-area-inset-right, 0px)); }
-  header { display: flex; flex-direction: column; gap: var(--space-3); }
-  header img { display: block; width: min(100%, 560px); height: auto; }
-  header p { margin: 0; max-width: 34rem; font-size: 17px; line-height: 1.55; color: var(--ink-soft); }
+  .top { display: flex; align-items: center; justify-content: space-between; gap: var(--space-4); flex-wrap: wrap; }
+  .top img { display: block; width: min(100%, 320px); height: auto; }
+  .nav { display: flex; gap: var(--space-2); }
+  .nav a { font-weight: 600; font-size: 16px; color: var(--ink); text-decoration: none; padding: 10px 18px; border-radius: var(--radius-pill); border: 2px solid transparent; }
+  .nav a[aria-current="page"] { border-color: var(--ink); background: var(--card); }
+  .nav a:focus-visible, a:focus-visible { outline: 4px solid var(--focus); outline-offset: 4px; }
+
+  .col { max-width: 40rem; }
+  section { display: flex; flex-direction: column; gap: var(--space-4); padding-top: var(--space-16); }
+  h1 { margin: 0; font-size: clamp(44px, 8vw, 72px); line-height: .98; font-weight: 500; letter-spacing: -.02em; text-wrap: balance; }
+  h2 { margin: 0; font-size: clamp(30px, 5vw, 40px); line-height: 1.08; font-weight: 500; letter-spacing: -.015em; text-wrap: balance; }
+  h3 { margin: 0; font-size: 22px; line-height: 1.2; font-weight: 600; text-wrap: balance; }
+  p { margin: 0; font-size: 18px; line-height: 1.6; }
+  .lead { font-size: clamp(20px, 2.6vw, 24px); line-height: 1.45; }
+  .eyebrow { font-size: 13px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-soft); }
+  .muted { color: var(--ink-soft); }
+
+  /* hero */
+  .hero { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: var(--space-8); align-items: center; padding-top: var(--space-12); }
+  .hero .col { display: flex; flex-direction: column; gap: var(--space-4); }
+  .ripple { width: clamp(140px, 22vw, 220px); height: auto; }
+  @media (max-width: 640px) { .hero { grid-template-columns: 1fr; } .ripple { order: -1; width: 120px; } }
+
+  .note { border-left: 0; background: var(--card); border: 2px solid var(--line); border-radius: var(--radius-l); padding: var(--space-6); display: flex; flex-direction: column; gap: var(--space-3); }
+  .sig { font-weight: 600; }
+  .sigrow { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: var(--space-2) var(--space-4); padding-top: var(--space-2); border-top: 2px solid var(--line); }
+  .social { display: flex; gap: var(--space-4); font-size: 15px; }
+  .social a { color: var(--tap); font-weight: 600; text-underline-offset: 3px; }
+
+  /* beliefs */
+  .grid2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-4); }
+  @media (max-width: 640px) { .grid2 { grid-template-columns: 1fr; } }
+  .belief { background: var(--card); border: 2px solid var(--line); border-radius: var(--radius-l); padding: var(--space-6); display: flex; flex-direction: column; gap: var(--space-2); }
+  .belief img { width: 48px; height: 48px; margin-bottom: var(--space-1); }
+  .belief p { font-size: 17px; }
+
+  /* never / always */
+  .ledger { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); border: var(--stroke-control) solid var(--ink); border-radius: var(--radius-l); overflow: hidden; background: var(--card); }
+  @media (max-width: 640px) { .ledger { grid-template-columns: 1fr; } }
+  .ledger > div { padding: var(--space-6); display: flex; flex-direction: column; gap: var(--space-3); }
+  .ledger > div + div { border-left: var(--stroke-control) solid var(--ink); background: var(--sun-soft); }
+  @media (max-width: 640px) { .ledger > div + div { border-left: 0; border-top: var(--stroke-control) solid var(--ink); } }
+  .ledger ul { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: var(--space-2); }
+  .ledger li { font-size: 17px; line-height: 1.45; display: flex; gap: var(--space-3); align-items: baseline; }
+  .ledger li::before { flex: none; width: 22px; text-align: center; font-weight: 600; }
+  .never li::before { content: "×"; color: var(--ink-soft); }
+  .always li::before { content: "✓"; color: var(--ink); }
+  .who { font-size: 15px; line-height: 1.55; color: var(--ink-soft); }
+  .who a { color: var(--ink); }
+
+  /* steps: a real sequence */
+  .steps { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: var(--space-4); counter-reset: step; }
+  .steps li { counter-increment: step; display: grid; grid-template-columns: 56px minmax(0, 1fr); gap: var(--space-4); align-items: start; }
+  .steps li::before { content: counter(step); width: 56px; height: 56px; display: grid; place-items: center; border-radius: 50%;
+    border: var(--stroke-control) solid var(--ink); background: var(--sun); font-family: var(--font-kid); font-weight: 700; font-size: 28px; padding-top: 4px; box-sizing: border-box; }
+  .steps .txt { display: flex; flex-direction: column; gap: var(--space-1); padding-top: 6px; }
+  .steps p { font-size: 17px; }
+
+  /* real-world twins */
+  .twins { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-4); }
+  @media (max-width: 860px) { .twins { grid-template-columns: 1fr; } }
+  .twin { background: var(--card); border: 2px solid var(--line); border-radius: var(--radius-l); overflow: hidden; display: flex; flex-direction: column; }
+  .twin svg { display: block; width: 100%; height: auto; aspect-ratio: 4 / 3; max-width: 100%; }
+  .twin .body { padding: var(--space-4) var(--space-6) var(--space-6); display: flex; flex-direction: column; gap: var(--space-2); }
+  .twin .name { font-family: var(--font-kid); font-weight: 700; font-size: 22px; letter-spacing: .02em; }
+  .twin p { font-size: 16px; line-height: 1.5; }
+  .soon { font-size: 12px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-soft); }
+
+  .end { display: flex; flex-direction: column; align-items: flex-start; gap: var(--space-6); }
+  .end .ps-btn { text-decoration: none; }
+  footer { margin-top: var(--space-16); padding-top: var(--space-4); border-top: 2px solid var(--line); font-size: 14px; color: var(--ink-soft); }
+
+  html { scroll-behavior: smooth; }
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+  .intro { padding-top: var(--space-8); display: flex; flex-direction: column; gap: var(--space-6); }
+  .intro p { font-size: 17px; line-height: 1.55; color: var(--ink-soft); max-width: 34rem; }
   .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 220px), 1fr)); gap: var(--space-6); }
+  .intro .grid { padding-top: 0; display: grid; }
   .grid .ps-tile { min-width: 0; }
-  footer { margin-top: auto; font-size: 14px; line-height: 1.45; color: var(--ink-soft); border-top: 2px solid var(--line); padding-top: var(--space-4); }
   @media (max-width: 520px) { .grid { grid-template-columns: 1fr 1fr; gap: var(--space-4); } .ps-tile-name { font-size: 20px; } }
+  /* the break between the kids' part and the grown-ups' part */
+  .grownups { margin-top: var(--space-16); padding-top: var(--space-12); border-top: var(--stroke-control) solid var(--ink); }
+  .grownups > .col:first-child { display: flex; flex-direction: column; gap: var(--space-4); }
+  .tag { display: inline-flex; align-items: center; gap: var(--space-2); align-self: flex-start; font-size: 13px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase;
+    color: var(--ink); background: var(--sun); border: 2px solid var(--ink); border-radius: var(--radius-pill); padding: 6px 14px 6px 8px; }
+  .tag img { width: 24px; height: 24px; }
+  .grownups > section:first-of-type { padding-top: var(--space-12); }
 </style>
 </head>
 <body>
-<main class="home">
-  <header>
-    <h1 style="margin:0"><img src="kit/logo/poke-and-see-lockup.svg" alt="Poke & See"></h1>
-    <p>Tiny science toys for kids aged 3 to 5. Poke something, see what happens. Best on a tablet, with a grown-up nearby and the sound on.</p>
+<div class="about">
+  <header class="top">
+    <a href="#toys"><img src="kit/logo/poke-and-see-lockup.svg" alt="Poke & See"></a>
+    <nav class="nav" aria-label="Main"><a href="#toys" aria-current="page">Toys</a><a href="#grown-ups">For grown-ups</a></nav>
   </header>
 
-  <section class="grid" aria-label="Toys">
+  <main>
+    <section class="intro" id="toys" aria-label="Toys">
+      <p>Tiny science toys for kids aged 3 to 5. Best on a tablet, with a grown-up nearby and the sound on.</p>
+      <section class="grid" id="toys-grid" aria-label="Toys">
     <a class="ps-tile" href="toys/ice-water-steam/" data-say="Ice, water, steam">
       <svg class="ps-tile-art" viewBox="0 0 240 180" aria-hidden="true"><rect width="240" height="180" fill="var(--sky-day)"/><rect y="120" width="240" height="60" fill="var(--paper)"/><path d="M84 52v86q0 10 10 10h52q10 0 10-10V52" fill="rgba(255,255,255,.55)" stroke="var(--ink)" stroke-width="5"/><path d="M87 104q16-5 33 0t33 0V138q0 7-7 7H94q-7 0-7-7z" fill="var(--water)"/><rect x="104" y="84" width="34" height="34" rx="7" fill="var(--ice)" stroke="var(--ink)" stroke-width="3" transform="rotate(-8 121 101)"/><rect x="74" y="156" width="92" height="9" rx="4.5" fill="var(--ink)"/></svg>
       <span class="ps-tile-name">ICE WATER STEAM</span>
@@ -42,9 +126,138 @@
       <span class="ps-tile-name">SHADOW</span>
     </span>
   </section>
+    </section>
+
+    <div class="grownups" id="grown-ups">
+      <div class="col">
+        <span class="tag"><img src="kit/icons/grown-ups.svg" alt="">For grown-ups</span>
+        <h1>Small toys for big questions.</h1>
+        <p class="lead">Poke &amp; See is a shelf of tiny science toys for kids aged 3 to 5. Each one does one thing. Your kid pokes it, sees what happens, and then gets to go and do something else.</p>
+      </div>
+
+    <section class="col">
+      <h2>Why this exists</h2>
+      <div class="note">
+        <p>My son is curious about ice and boiling water. Most three-year-olds are. So I made him a page where he could slide a knob from cold to hot and watch ice melt into water, then float away as steam.</p>
+        <p>I wanted him to understand it with his hands before anyone explained it in words. And then I wanted him to put the tablet down and go and look at a real ice cube.</p>
+        <p>That's the whole idea. One question, one small toy that answers it, a grown-up sitting next to them, and a reason to look at the real world afterwards.</p>
+        <div class="sigrow"><p class="sig">Kavya, parent and maker of Poke &amp; See</p><p class="social"><a href="https://www.linkedin.com/in/kavya-jahagirdar/" target="_blank" rel="noopener">LinkedIn</a><a href="https://x.com/kavyaj93" target="_blank" rel="noopener">X (Twitter)</a></p></div>
+      </div>
+    </section>
+    <section>
+      <div class="col" style="display:flex;flex-direction:column;gap:var(--space-4)">
+        <h2>What we believe</h2>
+        <p>Everything here starts from one idea: respect the kid. Three-year-olds are serious scientists with small hands. We build for their minds, not their size.</p>
+      </div>
+      <div class="grid2">
+        <article class="belief">
+          <img src="kit/icons/grown-ups.svg" alt="">
+          <h3>Kids can handle real words</h3>
+          <p>We say steam, molecules, shadow and pigment. Real numbers with real units, like 100°C. Simplified, but never wrong.</p>
+        </article>
+        <article class="belief">
+          <img src="kit/icons/globe.svg" alt="">
+          <h3>The real world is the show</h3>
+          <p>Oceans look like oceans and leaves look like leaves. A water molecule is one oxygen and two hydrogens, not a blob with a smiley face.</p>
+        </article>
+        <article class="belief">
+          <img src="kit/icons/paint.svg" alt="">
+          <h3>Poke first, words later</h3>
+          <p>Every toy does something the moment it's touched. Kids work it out with their hands, and the words catch up. No reading needed: everything important is spoken aloud.</p>
+        </article>
+        <article class="belief">
+          <img src="kit/icons/sun.svg" alt="">
+          <h3>Finding out is the reward</h3>
+          <p>No stars, no points, no "Great job!". If your kid gasps when the ice melts, the toy has done its job.</p>
+        </article>
+      </div>
+    </section>
+    <section>
+      <div class="col" style="display:flex;flex-direction:column;gap:var(--space-4)">
+        <h2>Mindfully made, never addictive</h2>
+        <p>Most apps for kids are built to keep them on the screen for as long as possible. We're building the opposite: toys that hand your kid back to you.</p>
+        <p>Every toy is small on purpose. There's nothing to collect and no next episode. Most kids find out what a toy does in a few minutes, and that's a good place to stop.</p>
+      </div>
+      <div class="ledger">
+        <div class="never">
+          <h3>You'll never find</h3>
+          <ul>
+            <li>Ads</li>
+            <li>Accounts or sign-ups</li>
+            <li>Tracking or analytics</li>
+            <li>Autoplay or "up next"</li>
+            <li>Points, streaks or rewards</li>
+            <li>Timers or "keep going" nudges</li>
+          </ul>
+        </div>
+        <div class="always">
+          <h3>You'll always find</h3>
+          <ul>
+            <li>One idea per toy, with a natural end</li>
+            <li>Sound that waits for the first touch</li>
+            <li>A mute button in the same corner</li>
+            <li>A "For grown-ups" note with the science</li>
+            <li>Something to try off screen afterwards</li>
+          </ul>
+        </div>
+      </div>
+      <p class="who col">The World Health Organization recommends no more than an hour of screen time a day for 2 to 4 year olds, and says less is better. Poke &amp; See is built to fit inside a few minutes of that, ideally with you sitting right there. (<a href="https://www.who.int/publications/i/item/9789241550536">WHO guidelines for children under 5</a>)</p>
+    </section>
+    <section>
+      <div class="col" style="display:flex;flex-direction:column;gap:var(--space-4)">
+        <h2>How to play together</h2>
+        <p>You don't need to know the science. Each toy tells you what you need, and your kid will lead.</p>
+      </div>
+      <ol class="steps col">
+        <li><div class="txt"><h3>Sit together, sound on</h3><p>A tablet on the table between you works best. The toys talk, so turn the volume up a little.</p></div></li>
+        <li><div class="txt"><h3>Let them poke first</h3><p>Hold back the explaining. Watch what they try. Kids test things in orders a grown-up would never think of.</p></div></li>
+        <li><div class="txt"><h3>Say the real word</h3><p>When the ice melts, say "melting". When the clouds appear, say "steam". The toy says it too, so they hear it twice.</p></div></li>
+        <li><div class="txt"><h3>Ask one question</h3><p>Tap "For grown-ups" for the science in one sentence and one question to ask. Then wait for the answer. Wrong answers are good answers at three.</p></div></li>
+        <li><div class="txt"><h3>Take it off screen</h3><p>Try the real-world twin below. The toy shows the idea; the kitchen, the garden and the bathtub make it stick.</p></div></li>
+        <li><div class="txt"><h3>Put it away</h3><p>When they've found what it does, close it. It'll be exactly the same tomorrow, and so will their questions.</p></div></li>
+      </ol>
+    </section>
+    <section>
+      <div class="col" style="display:flex;flex-direction:column;gap:var(--space-4)">
+        <h2>Every toy has a real-world twin</h2>
+        <p>Something small to try together, away from the screen.</p>
+      </div>
+      <div class="twins">
+        <article class="twin">
+          <svg viewBox="0 0 240 180" aria-hidden="true"><rect width="240" height="180" fill="var(--sky-day)"/><rect y="120" width="240" height="60" fill="var(--paper)"/><path d="M84 52v86q0 10 10 10h52q10 0 10-10V52" fill="rgba(255,255,255,.55)" stroke="var(--ink)" stroke-width="5"/><path d="M87 104q16-5 33 0t33 0V138q0 7-7 7H94q-7 0-7-7z" fill="var(--water)"/><rect x="104" y="84" width="34" height="34" rx="7" fill="var(--ice)" stroke="var(--ink)" stroke-width="3" transform="rotate(-8 121 101)"/><rect x="74" y="156" width="92" height="9" rx="4.5" fill="var(--ink)"/></svg>
+          <div class="body">
+            <span class="name">ICE WATER STEAM</span>
+            <p>Hold an ice cube in your hands until it's a puddle. Then watch steam rise from a cup of tea, from a safe distance.</p>
+          </div>
+        </article>
+        <article class="twin">
+          <svg viewBox="0 0 240 180" aria-hidden="true"><rect width="240" height="180" fill="var(--paper)"/><circle cx="96" cy="86" r="40" fill="var(--paint-blue)"/><circle cx="146" cy="86" r="40" fill="var(--paint-yellow)"/><path d="M121 55a40 40 0 0 1 0 62a40 40 0 0 1 0-62z" fill="#3F7A3A"/></svg>
+          <div class="body">
+            <span class="soon">Coming soon</span>
+            <span class="name">PAINT</span>
+            <p>Squish blue and yellow paint together with your fingers. Then guess what red and yellow will make before you try.</p>
+          </div>
+        </article>
+        <article class="twin">
+          <svg viewBox="0 0 240 180" aria-hidden="true"><rect width="240" height="180" fill="var(--sky-day)"/><circle cx="170" cy="50" r="20" fill="var(--sun)"/><rect y="132" width="240" height="48" fill="var(--grass)"/><rect x="66" y="78" width="12" height="56" fill="var(--bark)"/><circle cx="72" cy="70" r="28" fill="var(--leaf)"/><path d="M78 134 L20 160 L32 168 L84 136z" fill="rgba(27,35,51,.28)"/></svg>
+          <div class="body">
+            <span class="soon">Coming soon</span>
+            <span class="name">SHADOW</span>
+            <p>Stand outside in the morning, then again at lunch. Whose shadow got shorter, and where did it go?</p>
+          </div>
+        </article>
+      </div>
+    </section>
+
+      <section class="end col">
+        <h2>Go poke something.</h2>
+        <a class="ps-btn ps-btn--sun" href="#toys">BACK TO THE TOYS</a>
+      </section>
+    </div>
+  </main>
 
   <footer>No ads. No accounts. No tracking. Just toys.</footer>
-</main>
+</div>
 <script>
   // Tapping a tile says its name, then opens the toy.
   document.querySelectorAll('a.ps-tile[data-say]').forEach(function (a) {
