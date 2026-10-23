@@ -1,0 +1,14 @@
+{
+  "name": "Poke & See",
+  "short_name": "Poke & See",
+  "description": "Tiny science toys for kids aged 3 to 5. Poke something, see what happens, then go try it for real. No ads, no accounts, no tracking.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#F2F6F7",
+  "theme_color": "#F2F6F7",
+  "icons": [
+    { "src": "/assets/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "/assets/icon-512.png", "sizes": "512x512", "type": "image/png" }
+  ]
+}
