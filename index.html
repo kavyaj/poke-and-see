@@ -16,7 +16,8 @@
   .top { display: flex; align-items: center; justify-content: space-between; gap: var(--space-4); flex-wrap: wrap; }
   .top img { display: block; width: min(100%, 320px); height: auto; }
   .nav { display: flex; gap: var(--space-2); }
-  .nav a { font-weight: 600; font-size: 16px; color: var(--ink); text-decoration: none; padding: 10px 18px; border-radius: var(--radius-pill); border: 2px solid transparent; }
+  .nav a { display: inline-flex; align-items: center; justify-content: center; box-sizing: border-box; min-height: var(--target-min); min-width: var(--target-min);
+    font-weight: 600; font-size: 16px; color: var(--ink); text-decoration: none; padding: 0 18px; border-radius: var(--radius-pill); border: 2px solid transparent; }
   .nav a[aria-current="page"] { border-color: var(--ink); background: var(--card); }
   .nav a:focus-visible, a:focus-visible { outline: 4px solid var(--focus); outline-offset: 4px; }
 
@@ -38,9 +39,9 @@
 
   .note { border-left: 0; background: var(--card); border: 2px solid var(--line); border-radius: var(--radius-l); padding: var(--space-6); display: flex; flex-direction: column; gap: var(--space-3); }
   .sig { font-weight: 600; }
-  .sigrow { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: var(--space-2) var(--space-4); padding-top: var(--space-2); border-top: 2px solid var(--line); }
+  .sigrow { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--space-2) var(--space-4); padding-top: var(--space-2); border-top: 2px solid var(--line); }
   .social { display: flex; gap: var(--space-4); font-size: 15px; }
-  .social a { color: var(--tap); font-weight: 600; text-underline-offset: 3px; }
+  .social a { display: inline-flex; align-items: center; justify-content: center; min-height: var(--target-min); min-width: var(--target-min); color: var(--tap); font-weight: 600; text-underline-offset: 3px; }
 
   /* beliefs */
   .grid2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-4); }
