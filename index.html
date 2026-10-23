@@ -93,7 +93,11 @@
   .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 220px), 1fr)); gap: var(--space-6); }
   .intro .grid { padding-top: 0; display: grid; }
   .grid .ps-tile { min-width: 0; }
-  @media (max-width: 520px) { .grid { grid-template-columns: 1fr 1fr; gap: var(--space-4); } .ps-tile-name { font-size: 20px; } }
+  .ps-tile--soon { position: relative; }
+  .soon-tag { position: absolute; top: var(--space-3); left: var(--space-3); font-size: 12px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase;
+    color: var(--ink-soft); background: var(--card); border: 2px solid var(--line); border-radius: var(--radius-pill); padding: 4px 10px; }
+  @media (max-width: 520px) { .grid { grid-template-columns: 1fr 1fr; gap: var(--space-4); } .ps-tile-name { font-size: 20px; }
+    .soon-tag { top: var(--space-2); left: var(--space-2); font-size: 11px; padding: 3px 8px; } }
   /* the break between the kids' part and the grown-ups' part */
   .grownups { margin-top: var(--space-16); padding-top: var(--space-12); border-top: var(--stroke-control) solid var(--ink); }
   .grownups > .col:first-child { display: flex; flex-direction: column; gap: var(--space-4); }
@@ -120,10 +124,12 @@
     </a>
     <span class="ps-tile ps-tile--soon" aria-label="Paint, coming soon">
       <svg class="ps-tile-art" viewBox="0 0 240 180" aria-hidden="true"><rect width="240" height="180" fill="var(--paper)"/><circle cx="96" cy="86" r="40" fill="var(--paint-blue)"/><circle cx="146" cy="86" r="40" fill="var(--paint-yellow)"/><path d="M121 55a40 40 0 0 1 0 62a40 40 0 0 1 0-62z" fill="#3F7A3A"/></svg>
+      <span class="soon-tag" aria-hidden="true">Coming soon</span>
       <span class="ps-tile-name">PAINT</span>
     </span>
     <span class="ps-tile ps-tile--soon" aria-label="Shadow, coming soon">
       <svg class="ps-tile-art" viewBox="0 0 240 180" aria-hidden="true"><rect width="240" height="180" fill="var(--sky-day)"/><circle cx="170" cy="50" r="20" fill="var(--sun)"/><rect y="132" width="240" height="48" fill="var(--grass)"/><rect x="66" y="78" width="12" height="56" fill="var(--bark)"/><circle cx="72" cy="70" r="28" fill="var(--leaf)"/><path d="M78 134 L20 160 L32 168 L84 136z" fill="rgba(27,35,51,.28)"/></svg>
+      <span class="soon-tag" aria-hidden="true">Coming soon</span>
       <span class="ps-tile-name">SHADOW</span>
     </span>
   </section>
@@ -140,15 +146,15 @@
       <h2>Why this exists</h2>
       <div class="note">
         <p>My son is curious about ice and boiling water. Most three-year-olds are. So I made him a page where he could slide a knob from cold to hot and watch ice melt into water, then float away as steam.</p>
-        <p>I wanted him to understand it with his hands before anyone explained it in words. And then I wanted him to put the tablet down and go and look at a real ice cube.</p>
+        <p>I wanted him to understand it with his hands. And then I wanted him to put the tablet down and go and look at a real ice cube.</p>
         <p>That's the whole idea. One question, one small toy that answers it, a grown-up sitting next to them, and a reason to look at the real world afterwards.</p>
         <div class="sigrow"><p class="sig">Kavya, parent and maker of Poke &amp; See</p><p class="social"><a href="https://www.linkedin.com/in/kavya-jahagirdar/" target="_blank" rel="noopener">LinkedIn</a><a href="https://x.com/kavyaj93" target="_blank" rel="noopener">X (Twitter)</a></p></div>
       </div>
     </section>
     <section>
       <div class="col" style="display:flex;flex-direction:column;gap:var(--space-4)">
-        <h2>What we believe</h2>
-        <p>Everything here starts from one idea: respect the kid. Three-year-olds are serious scientists with small hands. We build for their minds, not their size.</p>
+        <h2>Everything here starts from one idea: respect the kid.</h2>
+        <p>Three-year-olds are serious scientists with small hands. We build for their minds, not their size.</p>
       </div>
       <div class="grid2">
         <article class="belief">
