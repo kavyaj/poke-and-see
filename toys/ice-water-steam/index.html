@@ -3,135 +3,137 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Ice, Water, Steam</title>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@700;800&display=swap">
+<title>Ice, Water, Steam · Poke & See</title>
+<link rel="icon" href="../../kit/logo/poke-and-see-mark.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../kit/tokens.css">
+<link rel="stylesheet" href="../../kit/kit.css">
 <style>
-:root{
-  color-scheme:light;
-  --ink:#1A1433;
-  --ice:#A6EBFF;
-  --water:#1E56F0;
-  --steam:#FFFFFF;
-  --cold:#2E7BF6;
-  --hot:#FF6B1A;
-  --bg:#D2EEFF;
-  --thumb:#A6EBFF;
-}
-html,body{height:100%}
-body{background:var(--bg);color:var(--ink);font-family:'Baloo 2','Arial Rounded MT Bold',system-ui,sans-serif;margin:0;transition:background-color .4s}
-*{box-sizing:border-box}
-[hidden]{display:none!important}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
-.app{height:100%;max-width:1100px;margin:0 auto;padding-inline:16px;padding-block:12px 18px;display:flex;flex-direction:column;gap:12px;position:relative;user-select:none;-webkit-user-select:none;-webkit-tap-highlight-color:transparent}
+.app{height:100%;max-width:1100px;margin:0 auto;display:flex;flex-direction:column;gap:var(--space-3);
+  padding:max(var(--space-3),env(safe-area-inset-top,0px)) max(var(--space-4),env(safe-area-inset-right,0px)) max(var(--space-3),env(safe-area-inset-bottom,0px)) max(var(--space-4),env(safe-area-inset-left,0px));
+  user-select:none;-webkit-user-select:none}
+button{touch-action:manipulation}
 
-button{font-family:inherit;color:var(--ink);cursor:pointer;touch-action:manipulation}
-button:focus-visible,input:focus-visible{outline:5px solid var(--hot);outline-offset:4px}
-
-.top{display:flex;align-items:center;justify-content:center;gap:16px;min-height:76px;padding-inline:64px}
-.badge{font-weight:800;font-size:clamp(34px,7vw,52px);line-height:1;letter-spacing:.04em;padding:10px 26px 4px;border:5px solid var(--ink);border-radius:22px;box-shadow:0 6px 0 var(--ink);background:var(--ice);color:var(--ink);transition:background-color .25s,color .25s,transform .12s}
-.badge:active{transform:translateY(4px);box-shadow:0 2px 0 var(--ink)}
-.badge.pop{animation:pop .5s cubic-bezier(.3,1.6,.5,1)}
-@keyframes pop{0%{transform:scale(.7)}100%{transform:scale(1)}}
-.num{font-weight:800;font-size:clamp(40px,8vw,64px);line-height:1;font-variant-numeric:tabular-nums;background:none;border:0;padding:6px 4px 0;min-width:3.2ch;text-align:left}
-.sound{position:absolute;top:12px;right:16px;width:60px;height:60px;border-radius:50%;border:5px solid var(--ink);background:#fff;box-shadow:0 5px 0 var(--ink);display:grid;place-items:center;padding:0}
-.sound:active{transform:translateY(3px);box-shadow:0 2px 0 var(--ink)}
+/* top bar: home, the word and the number, sound */
+.top{display:flex;align-items:center;gap:var(--space-3)}
+.top .mid{flex:1;min-width:0;display:flex;align-items:center;justify-content:center;gap:var(--space-4)}
+.top .ps-round{flex:none}
 .sound .off{display:none}
 .sound[aria-pressed="false"] .on{display:none}
 .sound[aria-pressed="false"] .off{display:block}
+.ps-chip{display:inline-flex;align-items:center;min-height:var(--target-min);cursor:pointer;transition:background-color .25s,color .25s}
+.ps-chip.pop{animation:pop .3s cubic-bezier(.3,1.6,.5,1)}
+@keyframes pop{0%{transform:scale(.8)}100%{transform:scale(1)}}
+.num{background:none;border:0;padding:6px 4px 0;min-width:3.4ch;min-height:var(--target-min);text-align:left;cursor:pointer}
+.num:focus-visible{outline:4px solid var(--focus);outline-offset:4px}
 
-.stage{flex:1 1 auto;min-height:300px;position:relative}
+/* the World */
+.stage{flex:1 1 auto;min-height:240px;position:relative;border-radius:var(--radius-l);overflow:hidden;background:var(--card);transition:background-color .4s}
 .stage canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
 
-.slider{display:flex;align-items:center;gap:12px}
-.end{flex:none;width:52px;height:52px}
-.track{position:relative;flex:1;min-width:0;padding-bottom:30px}
-input[type=range]{-webkit-appearance:none;appearance:none;display:block;width:100%;height:80px;margin:0;background:transparent;cursor:grab}
-input[type=range]:active{cursor:grabbing}
-input[type=range]::-webkit-slider-runnable-track{box-sizing:border-box;height:38px;border-radius:999px;border:5px solid var(--ink);background:linear-gradient(90deg,var(--ice) 0 14.29%,var(--water) 14.29% 85.71%,var(--steam) 85.71% 100%)}
-input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;box-sizing:border-box;width:72px;height:72px;margin-top:-22px;border-radius:50%;background:var(--thumb);border:7px solid var(--ink);box-shadow:0 5px 0 var(--ink)}
-input[type=range]::-moz-range-track{box-sizing:border-box;height:38px;border-radius:999px;border:5px solid var(--ink);background:linear-gradient(90deg,var(--ice) 0 14.29%,var(--water) 14.29% 85.71%,var(--steam) 85.71% 100%)}
-input[type=range]::-moz-range-thumb{box-sizing:border-box;width:72px;height:72px;border-radius:50%;background:var(--thumb);border:7px solid var(--ink);box-shadow:0 5px 0 var(--ink)}
-.mark{position:absolute;bottom:0;transform:translateX(-50%);font-weight:800;font-size:22px;line-height:1;display:flex;flex-direction:column;align-items:center;gap:2px;pointer-events:none}
-.mark::before{content:"";width:5px;height:10px;background:var(--ink);border-radius:3px}
+/* the one big control */
+.slider{display:flex;align-items:center;gap:var(--space-3)}
+.slider .end{flex:none;width:52px;height:52px}
+.slider .ps-slider-wrap{flex:1;min-width:0}
+.ps-slider{--ps-track:linear-gradient(90deg,var(--ice) 0 14.29%,var(--water) 14.29% 85.71%,var(--steam) 85.71% 100%)}
+.ps-slider::-webkit-slider-thumb{background:var(--thumb,var(--card))}
+.ps-slider::-moz-range-thumb{background:var(--thumb,var(--card))}
+.ps-mark{pointer-events:none}
 .m0{left:calc(36px + (100% - 72px) * .1429)}
 .m100{left:calc(36px + (100% - 72px) * .8571)}
 .hint{position:absolute;top:-34px;width:64px;height:40px;transform:translateX(-50%);pointer-events:none;animation:nudge 1.1s ease-in-out infinite}
 @keyframes nudge{0%,100%{margin-left:-10px}50%{margin-left:10px}}
 
-.jumps{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
-.jump{display:flex;align-items:center;justify-content:center;gap:10px;min-height:72px;border:5px solid var(--ink);border-radius:22px;box-shadow:0 6px 0 var(--ink);font-weight:800;font-size:clamp(20px,4vw,28px);letter-spacing:.04em;padding:6px 8px 0;transition:transform .12s}
-.jump:active{transform:translateY(4px);box-shadow:0 2px 0 var(--ink)}
-.jump svg{width:40px;height:40px;flex:none;margin-top:-4px}
-.j-ice{background:var(--ice)}
-.j-water{background:var(--water);color:#fff}
-.j-steam{background:var(--steam)}
-.jump[aria-current="true"]{outline:5px solid var(--ink);outline-offset:4px}
+/* quick jumps */
+.jumps{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:var(--space-3)}
+.jumps .ps-btn{padding-inline:var(--space-2)}
+
+/* grown-ups corner */
+.foot{position:relative;display:flex}
+.foot .ps-panel{position:absolute;left:0;bottom:calc(100% + var(--space-2));z-index:5;width:min(34rem,100%)}
+
 @media (max-width:520px){
-  .jump{flex-direction:column;gap:0;font-size:18px;min-height:84px}
-  .jump svg{width:34px;height:34px;margin-top:0}
-  .top{padding-inline:0 66px;justify-content:flex-start;gap:10px;min-height:64px}
-  .badge{font-size:30px;padding:8px 18px 2px}
-  .num{font-size:38px}
-  .sound{width:54px;height:54px}
+  .top{align-items:flex-start}
+  .top .mid{flex-direction:column;gap:var(--space-1)}
+  .ps-chip{font-size:40px;padding:8px 20px 0}
+  .num{font-size:44px;text-align:center}
+  .jumps .ps-btn{flex-direction:column;gap:0;font-size:20px;min-height:84px;padding-inline:var(--space-1)}
+  .jumps .ps-btn svg{width:32px;height:32px;margin-top:0}
 }
-@media (prefers-reduced-motion:reduce){.hint{animation:none}.badge.pop{animation:none}}
+@media (prefers-reduced-motion:reduce){.hint{animation:none}.ps-chip.pop{animation:none}}
 </style>
 </head>
 <body>
 <main class="app">
   <h1 class="sr">Ice, water and steam</h1>
 
-  <button class="sound" id="sound" type="button" aria-pressed="true" aria-label="Sound">
-    <svg class="on" width="34" height="34" viewBox="0 0 34 34" aria-hidden="true"><path d="M4 12h6l8-7v24l-8-7H4z" fill="#1A1433"/><path d="M23 11c2.5 3 2.5 9 0 12M27 7c4.5 5 4.5 15 0 20" stroke="#1A1433" stroke-width="3.5" fill="none" stroke-linecap="round"/></svg>
-    <svg class="off" width="34" height="34" viewBox="0 0 34 34" aria-hidden="true"><path d="M4 12h6l8-7v24l-8-7H4z" fill="#1A1433"/><path d="M23 12l8 10M31 12l-8 10" stroke="#1A1433" stroke-width="3.5" stroke-linecap="round"/></svg>
-  </button>
-
   <div class="top">
-    <button class="badge" id="badge" type="button">ICE</button>
-    <button class="num" id="num" type="button" aria-label="Temperature">−10°</button>
+    <a class="ps-round" href="../../" aria-label="Home">
+      <svg viewBox="0 0 48 48" aria-hidden="true"><path d="M8 23L24 9l16 14v16a2 2 0 0 1-2 2H29V30h-10v11H10a2 2 0 0 1-2-2z" fill="var(--sun)" stroke="var(--ink)" stroke-width="3.5" stroke-linejoin="round"/></svg>
+    </a>
+    <div class="mid">
+      <button class="ps-chip ps-chip--ice" id="badge" type="button">ICE</button>
+      <button class="ps-readout num" id="num" type="button"><span id="numv">−10</span><small>°</small></button>
+    </div>
+    <button class="ps-round sound" id="sound" type="button" aria-pressed="true" aria-label="Sound">
+      <svg class="on" viewBox="0 0 48 48" aria-hidden="true"><path d="M7 18h8l11-9v30l-11-9H7z" fill="var(--ink)"/><path d="M32 17c3 4 3 10 0 14M37 12c6 7 6 17 0 24" stroke="var(--ink)" stroke-width="4" fill="none" stroke-linecap="round"/></svg>
+      <svg class="off" viewBox="0 0 48 48" aria-hidden="true"><path d="M7 18h8l11-9v30l-11-9H7z" fill="var(--ink)"/><path d="M32 18l10 12M42 18L32 30" stroke="var(--ink)" stroke-width="4" stroke-linecap="round"/></svg>
+    </button>
   </div>
 
   <div class="stage" id="stage">
-    <canvas id="cv" role="img" aria-label="A glass on a stove. Cold makes ice, warm makes water, hot makes steam. A magnifying glass shows the tiny bits inside."></canvas>
+    <canvas id="cv" role="img" aria-label="A glass on a stove. Cold makes ice, warm makes water, hot makes steam. A magnifying glass shows the water molecules inside."></canvas>
   </div>
 
   <div class="slider">
-    <svg class="end" viewBox="0 0 52 52" aria-hidden="true">
-      <g stroke-linecap="round"><g stroke="#1A1433" stroke-width="9"><path d="M26 5v42M8 15.5l36 21M8 36.5l36-21"/></g><g stroke="#2E7BF6" stroke-width="4"><path d="M26 5v42M8 15.5l36 21M8 36.5l36-21"/></g></g>
-    </svg>
-    <div class="track">
-      <svg class="hint" id="hint" viewBox="0 0 64 40" aria-hidden="true"><path d="M4 20l12-12v7h32V8l12 12-12 12v-7H16v7z" fill="#FFD23F" stroke="#1A1433" stroke-width="4" stroke-linejoin="round"/></svg>
-      <input type="range" id="temp" min="-20" max="120" step="1" value="-10" aria-label="Temperature">
-      <span class="mark m0">0°</span>
-      <span class="mark m100">100°</span>
+    <svg class="end" viewBox="0 0 48 48" aria-hidden="true"><g stroke-linecap="round"><path d="M24 5v38M7.5 14.5l33 19M7.5 33.5l33-19" stroke="var(--ink)" stroke-width="8"/><path d="M24 5v38M7.5 14.5l33 19M7.5 33.5l33-19" stroke="var(--ice)" stroke-width="3.5"/></g></svg>
+    <div class="ps-slider-wrap">
+      <svg class="hint" id="hint" viewBox="0 0 64 40" aria-hidden="true"><path d="M4 20l12-12v7h32V8l12 12-12 12v-7H16v7z" fill="var(--sun)" stroke="var(--ink)" stroke-width="4" stroke-linejoin="round"/></svg>
+      <input class="ps-slider" type="range" id="temp" min="-20" max="120" step="1" value="-10" aria-label="Temperature">
+      <span class="ps-mark m0">0°</span>
+      <span class="ps-mark m100">100°</span>
     </div>
-    <svg class="end" viewBox="0 0 52 52" aria-hidden="true">
-      <path d="M26 4c4 9 14 13 14 26a14 14 0 0 1-28 0c0-7 4-10 6-15 2 4 4 5 6 5-1-6 0-11 2-16z" fill="#FF6B1A" stroke="#1A1433" stroke-width="4" stroke-linejoin="round"/>
-      <path d="M26 26c3 4 7 6 7 11a7 7 0 0 1-14 0c0-4 4-7 7-11z" fill="#FFD23F"/>
-    </svg>
+    <svg class="end" viewBox="0 0 48 48" aria-hidden="true"><path d="M24 4c4 9 13 13 13 25a13 13 0 0 1-26 0c0-7 4-10 6-15 2 4 3 5 5 5-1-6 0-10 2-15z" fill="var(--flame)" stroke="var(--ink)" stroke-width="3.5" stroke-linejoin="round"/><path d="M24 25c3 4 6 6 6 10a6 6 0 0 1-12 0c0-4 3-6 6-10z" fill="var(--flame-core)"/></svg>
   </div>
 
   <div class="jumps">
-    <button class="jump j-ice" id="j0" type="button" aria-current="true">
-      <svg viewBox="0 0 40 40" aria-hidden="true"><rect x="5" y="5" width="30" height="30" rx="7" fill="#A6EBFF" stroke="#1A1433" stroke-width="4"/><path d="M12 19v-7h7" stroke="#fff" stroke-width="4" fill="none" stroke-linecap="round"/></svg>ICE</button>
-    <button class="jump j-water" id="j1" type="button" aria-current="false">
-      <svg viewBox="0 0 40 40" aria-hidden="true"><path d="M20 3c6 9 13 15 13 23a13 13 0 0 1-26 0c0-8 7-14 13-23z" fill="#6E9BFF" stroke="#fff" stroke-width="4" stroke-linejoin="round"/></svg>WATER</button>
-    <button class="jump j-steam" id="j2" type="button" aria-current="false">
-      <svg viewBox="0 0 40 40" aria-hidden="true"><path d="M11 31a8 8 0 0 1-1-16 10 10 0 0 1 19-2 8 8 0 0 1 2 18z" fill="#fff" stroke="#1A1433" stroke-width="4" stroke-linejoin="round"/></svg>STEAM</button>
+    <button class="ps-btn ps-btn--ice" id="j0" type="button" aria-current="true">
+      <svg viewBox="0 0 48 48" aria-hidden="true"><rect x="7" y="7" width="34" height="34" rx="8" fill="var(--ice)" stroke="var(--ink)" stroke-width="3.5"/><path d="M15 23v-8h8" stroke="var(--card)" stroke-width="4" fill="none" stroke-linecap="round"/></svg>ICE</button>
+    <button class="ps-btn ps-btn--water" id="j1" type="button" aria-current="false">
+      <svg viewBox="0 0 48 48" aria-hidden="true"><path d="M24 4c6 9 13 15 13 24a13 13 0 0 1-26 0c0-9 7-15 13-24z" fill="var(--water)" stroke="var(--ink)" stroke-width="3.5" stroke-linejoin="round"/><path d="M17 28a7 7 0 0 0 5 7" stroke="var(--water-surface)" stroke-width="3.5" fill="none" stroke-linecap="round"/></svg>WATER</button>
+    <button class="ps-btn ps-btn--steam" id="j2" type="button" aria-current="false">
+      <svg viewBox="0 0 48 48" aria-hidden="true"><path d="M13 37a9 9 0 0 1-1-18 12 12 0 0 1 23-2 9 9 0 0 1 2 20z" fill="var(--steam)" stroke="var(--ink)" stroke-width="3.5" stroke-linejoin="round"/></svg>STEAM</button>
+  </div>
+
+  <div class="foot">
+    <button class="ps-grownups" id="gu" type="button" aria-expanded="false" aria-controls="gupanel">
+      <svg viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="17" fill="var(--card)" stroke="var(--ink-soft)" stroke-width="3.5"/><circle cx="24" cy="16" r="2.6" fill="var(--ink-soft)"/><path d="M24 22v11" stroke="var(--ink-soft)" stroke-width="4" stroke-linecap="round"/></svg>For grown-ups</button>
+    <div class="ps-panel" id="gupanel" hidden>
+      <p class="ps-label">The science</p>
+      <h3>Ice, Water, Steam</h3>
+      <p>Heat makes water molecules move faster. At 0°C they let go of each other and ice melts. At 100°C they move fast enough to fly apart as steam.</p>
+      <p class="ps-ask">Ask: what happens to a puddle on a hot day?</p>
+    </div>
   </div>
 </main>
 
+<script src="../../kit/kit.js"></script>
 <script>
 (function(){
-const INK='#1A1433',ICE='#A6EBFF',ICE2='#5FC6EF',WATER='#1E56F0',WATER2='#7FA8FF',WHITE='#FFFFFF',FL='#FF6B1A',FL2='#FFD23F',HANDLE='#FF6B1A',LENSBG='#221A4A',LENSW='#2E3C96';
-const MOL=['#A6EBFF','#4F8BFF','#FFFFFF'];
-const WORDS=['ICE','WATER','STEAM'];
-const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const T=PS.token;
+const INK=T('ink'),CARD=T('card'),SKY=T('sky-day'),ICE=T('ice'),WATER=T('water'),SURF=T('water-surface'),STEAM=T('steam'),
+  FL=T('flame'),FL2=T('flame-core'),BARK=T('bark'),LENS=T('lens'),LENSW=T('lens-water'),OXY=T('atom-oxygen'),HYD=T('atom-hydrogen');
+const DIAG=parseFloat(T('stroke-diagram'))||3;
+const ICE2=mix(ICE,WATER,0.3);
+const WORDS=['ICE','WATER','STEAM'],SAY=['Ice','Water','Steam'];
+const CHIP=['ps-chip--ice','ps-chip--water','ps-chip--steam'],FILL=[ICE,WATER,STEAM];
+const reduce=PS.reducedMotion;
 const $=id=>document.getElementById(id);
 const cl=(x,a=0,b=1)=>x<a?a:x>b?b:x;
 const ease=x=>x*x*(3-2*x);
-function hex(c){c=c.replace('#','');return[0,2,4].map(i=>parseInt(c.slice(i,i+2),16))}
-function mix(a,b,t){const x=hex(a),y=hex(b);return'rgb('+x.map((v,i)=>Math.round(v+(y[i]-v)*t)).join(',')+')'}
+function rgb(c){if(c[0]==='#'){c=c.slice(1);return[0,2,4].map(i=>parseInt(c.slice(i,i+2),16))}return c.match(/[\d.]+/g).slice(0,3).map(Number)}
+function mix(a,b,t){const x=rgb(a),y=rgb(b);return'rgb('+x.map((v,i)=>Math.round(v+(y[i]-v)*t)).join(',')+')'}
+function alpha(c,a){return'rgba('+rgb(c).join(',')+','+a+')'}
 
 /* ---------- layout ---------- */
 const LAND={W:1000,H:600,g:{cx:290,top:190,bot:450,hw:140},by:520,lens:{x:745,y:285,r:200}};
@@ -148,23 +150,26 @@ function resize(){
 new ResizeObserver(resize).observe(stage);resize();
 
 /* ---------- molecules (lens space, radius 1) ---------- */
+// Shape from the design system's Molecule: oxygen r22, hydrogens r12 at (±24, 18), about 104° apart.
+const U=0.0041,OR=22*U,HR=12*U,HX=24*U,HY=18*U,EXT=Math.hypot(HX,HY)+HR;
 function rng(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
-const R=rng(11),N=20,MR=0.085,M=[];
+const R=rng(11),COLS=4,ROWS=3,N=COLS*ROWS,GAP=0.3,D=0.22,M=[];
 const slots=[];
-while(slots.length<N){
-  const x=(R()*2-1)*0.78,y=0.08+R()*0.72;
-  if(Math.hypot(x,y)>0.8)continue;
-  if(slots.every(s=>Math.hypot(s[0]-x,s[1]-y)>0.18))slots.push([x,y]);
+for(let minD=0.25,tries=1;slots.length<N;tries++){
+  const x=(R()*2-1)*0.8,y=-0.1+R()*0.9;
+  if(Math.hypot(x,y)<=0.8&&slots.every(s=>Math.hypot(s[0]-x,s[1]-y)>minD))slots.push([x,y]);
+  if(tries%5000===0)minD*=0.95;
 }
 slots.sort((p,q)=>p[0]-q[0]);
 for(let i=0;i<N;i++){
-  const c=i%5,r=(i/5)|0,lx=(c-2)*0.21,ly=(r-1.5)*0.21+0.02;
-  M.push({lx,ly,sx:slots[i][0],sy:slots[i][1],x:lx,y:ly,vx:0,vy:0,ph:R()*6.28,ph2:R()*6.28});
+  const c=i%COLS,r=(i/COLS)|0,lx=(c-(COLS-1)/2)*GAP,ly=(r-(ROWS-1)/2)*GAP+0.02;
+  M.push({lx,ly,sx:slots[i][0],sy:slots[i][1],x:lx,y:ly,vx:0,vy:0,ph:R()*6.28,ph2:R()*6.28,
+    a0:(r+c)%2?0.15:-0.15,spin:0,w:(R()<0.5?-1:1)*(0.6+R()*0.6)});
 }
 function sim(dt,time,temp,a,b){
   const heat=(temp+20)/140;
   const k=(1-b)*(150-110*a),damp=(1-b)*7+0.02;
-  const sp=0.6+1.0*heat,slosh=0.05*Math.sin(time*0.9);
+  const sp=0.6+1.0*heat,slosh=0.05*Math.sin(time*0.9),spin=(0.5+1.5*heat)*(1+2*b);
   for(const m of M){
     const tx=m.lx*(1-a)+(m.sx+0.04*Math.sin(time*1.3+m.ph)+slosh)*a;
     const ty=m.ly*(1-a)+(m.sy+0.03*Math.cos(time*1.1+m.ph2))*a;
@@ -176,17 +181,20 @@ function sim(dt,time,temp,a,b){
       const f=1+(sp/s-1)*b*Math.min(1,dt*4);m.vx*=f;m.vy*=f;
     }
     m.x+=m.vx*dt;m.y+=m.vy*dt;
+    // Tumbling: locked in ice, turning in water, spinning in steam. Wrap only when fully melted, so it never jumps.
+    m.spin+=m.w*spin*a*dt;
+    if(a>0.999)m.spin=((m.spin+Math.PI)%(2*Math.PI)+2*Math.PI)%(2*Math.PI)-Math.PI;
   }
   for(let i=0;i<N;i++)for(let j=i+1;j<N;j++){
     const p=M[i],q=M[j],dx=q.x-p.x,dy=q.y-p.y,d=Math.hypot(dx,dy);
-    if(d>0&&d<2*MR){
-      const nx=dx/d,ny=dy/d,o=(2*MR-d)/2;
+    if(d>0&&d<D){
+      const nx=dx/d,ny=dy/d,o=(D-d)/2;
       p.x-=nx*o;p.y-=ny*o;q.x+=nx*o;q.y+=ny*o;
       const rv=(q.vx-p.vx)*nx+(q.vy-p.vy)*ny;
       if(rv<0){p.vx+=rv*nx;p.vy+=rv*ny;q.vx-=rv*nx;q.vy-=rv*ny}
     }
   }
-  const lim=1-MR-0.04;
+  const lim=1-EXT-0.02;
   for(const m of M){
     const d=Math.hypot(m.x,m.y);
     if(d>lim){const nx=m.x/d,ny=m.y/d;m.x=nx*lim;m.y=ny*lim;const vn=m.vx*nx+m.vy*ny;if(vn>0){m.vx-=2*vn*nx;m.vy-=2*vn*ny}}
@@ -209,16 +217,19 @@ function flame(x,y,w,h){
 function flake(x,y,s){
   ctx.beginPath();
   for(let i=0;i<3;i++){const an=i*Math.PI/3;ctx.moveTo(x-Math.cos(an)*s,y-Math.sin(an)*s);ctx.lineTo(x+Math.cos(an)*s,y+Math.sin(an)*s)}
-  ctx.strokeStyle=INK;ctx.lineWidth=8;ctx.stroke();ctx.strokeStyle=WHITE;ctx.lineWidth=3.5;ctx.stroke();
+  ctx.strokeStyle=INK;ctx.lineWidth=8;ctx.stroke();ctx.strokeStyle=ICE;ctx.lineWidth=3.5;ctx.stroke();
 }
-function puff(x,y,r){
-  const P=[[-r*.6,0,r*.72],[r*.6,0,r*.72],[0,-r*.42,r*.86]];
-  ctx.fillStyle=INK;for(const p of P){circle(x+p[0],y+p[1],p[2]+5);ctx.fill()}
-  ctx.fillStyle=WHITE;for(const p of P){circle(x+p[0],y+p[1],p[2]);ctx.fill()}
+// One water molecule: an oxygen with two hydrogens, CPK colours, ink edges. k = lens radius.
+function molecule(x,y,an,k){
+  const c=Math.cos(an),s=Math.sin(an);
+  ctx.lineWidth=DIAG;ctx.strokeStyle=INK;
+  circle(x,y,OR*k);ctx.fillStyle=OXY;ctx.fill();ctx.stroke();
+  ctx.fillStyle=HYD;
+  for(const px of [-HX,HX]){circle(x+(px*c-HY*s)*k,y+(px*s+HY*c)*k,HR*k);ctx.fill();ctx.stroke()}
 }
 
 /* ---------- scene ---------- */
-function draw(time,temp,a,b,st){
+function draw(time,temp,a,b){
   ctx.setTransform(dpr,0,0,dpr,0,0);ctx.clearRect(0,0,cv.width,cv.height);
   ctx.setTransform(dpr*scale,0,0,dpr*scale,dpr*ox,dpr*oy);
   ctx.lineJoin='round';ctx.lineCap='round';
@@ -253,7 +264,7 @@ function draw(time,temp,a,b,st){
   const r=36,gp=new Path2D();
   gp.moveTo(L,top);gp.lineTo(L,bot-r);gp.quadraticCurveTo(L,bot,L+r,bot);gp.lineTo(Rt-r,bot);gp.quadraticCurveTo(Rt,bot,Rt,bot-r);gp.lineTo(Rt,top);
   const gc=new Path2D(gp);gc.closePath();
-  ctx.fillStyle='rgba(255,255,255,.6)';ctx.fill(gc);
+  ctx.fillStyle=alpha(CARD,0.6);ctx.fill(gc);
   ctx.save();ctx.clip(gc);
 
   const amp=3+cl((temp-70)/30)*7*amt;
@@ -276,7 +287,7 @@ function draw(time,temp,a,b,st){
     rr(-size/2,-size/2,size,size,size*0.18);ctx.fillStyle=ICE;ctx.fill();
     ctx.strokeStyle=INK;ctx.lineWidth=7;ctx.stroke();
     ctx.fillStyle=ICE2;rr(-size*0.36,size*0.24,size*0.72,size*0.11,size*0.055);ctx.fill();
-    ctx.strokeStyle=WHITE;ctx.lineWidth=Math.max(4,size*0.07);
+    ctx.strokeStyle=CARD;ctx.lineWidth=Math.max(4,size*0.07);
     ctx.beginPath();ctx.moveTo(-size*0.3,-size*0.08);ctx.lineTo(-size*0.3,-size*0.3);ctx.lineTo(-size*0.08,-size*0.3);ctx.stroke();
     ctx.restore();
     if(amt>0.01){ctx.globalAlpha=0.35;waterPath();ctx.fillStyle=WATER;ctx.fill();ctx.globalAlpha=1}
@@ -284,13 +295,13 @@ function draw(time,temp,a,b,st){
   if(amt>0.01){
     ctx.beginPath();
     for(let x=L-10;x<=Rt+10;x+=8){const y=wTop+Math.sin(x*0.045+time*(3+hf*4))*amp;x===L-10?ctx.moveTo(x,y):ctx.lineTo(x,y)}
-    ctx.strokeStyle=WATER2;ctx.lineWidth=6;ctx.stroke();
+    ctx.strokeStyle=SURF;ctx.lineWidth=6;ctx.stroke();
   }
 
   /* bubbles */
   const bi=cl((temp-60)/40)*amt;
   if(bi>0.02){
-    ctx.strokeStyle=WHITE;ctx.lineWidth=3.5;
+    ctx.strokeStyle=SURF;ctx.lineWidth=3.5;
     const n=Math.round(20*bi),h=bot-12-wTop;
     for(let i=0;i<n;i++){
       const u=(time*(0.7+0.6*hf)+i*0.319)%1,x=L+24+((i*53)%(2*hw-48))+Math.sin(time*5+i)*4,y=bot-12-u*h,rad=4+(i%3)*3;
@@ -301,7 +312,7 @@ function draw(time,temp,a,b,st){
 
   ctx.strokeStyle=INK;ctx.lineWidth=9;ctx.stroke(gp);
   ctx.beginPath();ctx.moveTo(L,top);ctx.lineTo(L-10,top-8);ctx.moveTo(Rt,top);ctx.lineTo(Rt+10,top-8);ctx.stroke();
-  ctx.strokeStyle='rgba(255,255,255,.9)';ctx.lineWidth=6;ctx.beginPath();ctx.moveTo(L+18,top+26);ctx.lineTo(L+18,top+90);ctx.stroke();
+  ctx.strokeStyle=alpha(CARD,0.9);ctx.lineWidth=6;ctx.beginPath();ctx.moveTo(L+18,top+26);ctx.lineTo(L+18,top+90);ctx.stroke();
 
   /* steam clouds */
   const w=Math.max(b,0.35*cl((temp-85)/15)*amt);
@@ -317,7 +328,7 @@ function draw(time,temp,a,b,st){
       C.push([x-rad*.6,y,rad*.72],[x+rad*.6,y,rad*.72],[x,y-rad*.42,rad*.86]);
     }
     ctx.fillStyle=INK;for(const c of C){circle(c[0],c[1],c[2]+5);ctx.fill()}
-    ctx.fillStyle=WHITE;for(const c of C){circle(c[0],c[1],c[2]);ctx.fill()}
+    ctx.fillStyle=STEAM;for(const c of C){circle(c[0],c[1],c[2]);ctx.fill()}
   }
 
   /* zoom callout */
@@ -333,87 +344,49 @@ function draw(time,temp,a,b,st){
   const hc=Math.cos(Math.PI/4),hs=Math.sin(Math.PI/4);
   ctx.lineCap='round';
   ctx.strokeStyle=INK;ctx.lineWidth=50;ctx.beginPath();ctx.moveTo(lx+hc*lr,ly+hs*lr);ctx.lineTo(lx+hc*(lr+95),ly+hs*(lr+95));ctx.stroke();
-  ctx.strokeStyle=HANDLE;ctx.lineWidth=34;ctx.beginPath();ctx.moveTo(lx+hc*(lr+22),ly+hs*(lr+22));ctx.lineTo(lx+hc*(lr+95),ly+hs*(lr+95));ctx.stroke();
+  ctx.strokeStyle=BARK;ctx.lineWidth=34;ctx.beginPath();ctx.moveTo(lx+hc*(lr+22),ly+hs*(lr+22));ctx.lineTo(lx+hc*(lr+95),ly+hs*(lr+95));ctx.stroke();
 
   /* lens inside */
-  circle(lx,ly,lr);ctx.fillStyle=LENSBG;ctx.fill();
+  circle(lx,ly,lr);ctx.fillStyle=LENS;ctx.fill();
   ctx.save();circle(lx,ly,lr-2);ctx.clip();
   if(iceAmt>0.02){ctx.globalAlpha=0.16*iceAmt;ctx.fillStyle=ICE;ctx.fillRect(lx-lr,ly-lr,lr*2,lr*2);ctx.globalAlpha=1}
   if(amt>0.02){
     ctx.globalAlpha=amt;ctx.fillStyle=LENSW;ctx.beginPath();
-    const wy=ly-lr*0.02;ctx.moveTo(lx-lr,ly+lr);
+    const wy=ly-lr*0.14;ctx.moveTo(lx-lr,ly+lr);
     for(let x=lx-lr;x<=lx+lr;x+=10)ctx.lineTo(x,wy+Math.sin(x*0.03+time*2)*6);
     ctx.lineTo(lx+lr,ly+lr);ctx.closePath();ctx.fill();ctx.globalAlpha=1;
   }
   const heat=(temp+20)/140;
   const jA=reduce?0.3:1,jAmp=(1-b)*(0.006+0.03*heat)*jA*(1-0.5*a),jF=18+30*heat;
-  const P=M.map(m=>[lx+(m.x+Math.sin(time*jF+m.ph)*jAmp)*lr,ly+(m.y+Math.cos(time*jF*1.13+m.ph2)*jAmp)*lr]);
+  const P=M.map(m=>[lx+(m.x+Math.sin(time*jF+m.ph)*jAmp)*lr,ly+(m.y+Math.cos(time*jF*1.13+m.ph2)*jAmp)*lr,m.a0+m.spin*a+Math.sin(time*jF*0.7+m.ph)*jAmp*4]);
+  /* hydrogen bonds hold the ice lattice; they let go as it melts */
   const bond=cl(1-a*3);
   if(bond>0.01){
-    ctx.globalAlpha=bond;ctx.strokeStyle=WHITE;ctx.lineWidth=7;ctx.beginPath();
-    for(let i=0;i<N;i++){const c=i%5;if(c<4){ctx.moveTo(P[i][0],P[i][1]);ctx.lineTo(P[i+1][0],P[i+1][1])}if(i+5<N){ctx.moveTo(P[i][0],P[i][1]);ctx.lineTo(P[i+5][0],P[i+5][1])}}
-    ctx.stroke();ctx.globalAlpha=1;
+    const u=U*lr;
+    ctx.globalAlpha=0.7*bond;ctx.strokeStyle=HYD;ctx.lineWidth=4*u;ctx.setLineDash([2*u,8*u]);ctx.beginPath();
+    for(let i=0;i<N;i++){const c=i%COLS;if(c<COLS-1){ctx.moveTo(P[i][0],P[i][1]);ctx.lineTo(P[i+1][0],P[i+1][1])}if(i+COLS<N){ctx.moveTo(P[i][0],P[i][1]);ctx.lineTo(P[i+COLS][0],P[i+COLS][1])}}
+    ctx.stroke();ctx.setLineDash([]);ctx.globalAlpha=1;
   }
-  const col=b>0?mix(MOL[1],MOL[2],b):mix(MOL[0],MOL[1],a);
-  const mr=MR*lr;
-  for(const [x,y] of P){
-    circle(x,y,mr);ctx.fillStyle=col;ctx.fill();ctx.strokeStyle=INK;ctx.lineWidth=3;ctx.stroke();
-    ctx.fillStyle='rgba(255,255,255,.85)';circle(x-mr*0.4,y-mr*0.45,mr*0.2);ctx.fill();
-    ctx.fillStyle=INK;ctx.strokeStyle=INK;ctx.lineWidth=2.4;
-    if(st===0){
-      ctx.beginPath();ctx.arc(x-mr*0.35,y-mr*0.05,mr*0.16,Math.PI*1.1,Math.PI*1.9);ctx.arc(x+mr*0.35,y-mr*0.05,mr*0.16,Math.PI*1.1,Math.PI*1.9);ctx.stroke();
-      ctx.beginPath();ctx.moveTo(x-mr*0.22,y+mr*0.4);ctx.lineTo(x+mr*0.22,y+mr*0.4);ctx.stroke();
-    }else if(st===1){
-      circle(x-mr*0.35,y-mr*0.1,mr*0.13);ctx.fill();circle(x+mr*0.35,y-mr*0.1,mr*0.13);ctx.fill();
-      ctx.beginPath();ctx.arc(x,y+mr*0.15,mr*0.35,0.25,Math.PI-0.25);ctx.stroke();
-    }else{
-      circle(x-mr*0.35,y-mr*0.18,mr*0.17);ctx.fill();circle(x+mr*0.35,y-mr*0.18,mr*0.17);ctx.fill();
-      circle(x,y+mr*0.4,mr*0.2);ctx.fill();
-    }
-  }
+  for(const [x,y,an] of P)molecule(x,y,an,lr);
   ctx.restore();
   circle(lx,ly,lr);ctx.strokeStyle=INK;ctx.lineWidth=18;ctx.stroke();
-  ctx.strokeStyle='rgba(255,255,255,.75)';ctx.lineWidth=5;ctx.beginPath();ctx.arc(lx,ly,lr-20,Math.PI*1.1,Math.PI*1.4);ctx.stroke();
+  ctx.strokeStyle=alpha(CARD,0.75);ctx.lineWidth=5;ctx.beginPath();ctx.arc(lx,ly,lr-20,Math.PI*1.1,Math.PI*1.4);ctx.stroke();
 }
 
-/* ---------- sound ---------- */
-let AC=null,master=null,hissGain=null,noiseBuf=null,muted=false;
-try{muted=localStorage.getItem('iws-muted')==='1'}catch(e){}
-function audioInit(){
-  if(AC){if(AC.state==='suspended')AC.resume();return}
-  try{AC=new (window.AudioContext||window.webkitAudioContext)()}catch(e){AC=null;return}
-  master=AC.createGain();master.gain.value=muted?0:0.9;
-  const comp=AC.createDynamicsCompressor();master.connect(comp);comp.connect(AC.destination);
-  const len=AC.sampleRate*2;noiseBuf=AC.createBuffer(1,len,AC.sampleRate);
-  const d=noiseBuf.getChannelData(0);for(let i=0;i<len;i++)d[i]=Math.random()*2-1;
-  const src=AC.createBufferSource();src.buffer=noiseBuf;src.loop=true;
-  const bp=AC.createBiquadFilter();bp.type='bandpass';bp.frequency.value=3800;bp.Q.value=0.7;
-  hissGain=AC.createGain();hissGain.gain.value=0;
-  src.connect(bp);bp.connect(hissGain);hissGain.connect(master);src.start();
-}
-const ok=()=>AC&&!muted;
-function tone(f,dur,o={}){
-  if(!ok())return;
-  const t0=AC.currentTime+(o.delay||0),os=AC.createOscillator(),g=AC.createGain();
-  os.type=o.type||'sine';os.frequency.setValueAtTime(f,t0);
-  if(o.to)os.frequency.exponentialRampToValueAtTime(o.to,t0+dur);
-  const v=o.vol||0.15;
-  g.gain.setValueAtTime(0.0001,t0);g.gain.exponentialRampToValueAtTime(v,t0+0.012);g.gain.exponentialRampToValueAtTime(0.0001,t0+dur);
-  os.connect(g);g.connect(master);os.start(t0);os.stop(t0+dur+0.05);
-}
-function noise(dur,o={}){
-  if(!ok())return;
-  const t0=AC.currentTime+(o.delay||0),s=AC.createBufferSource(),f=AC.createBiquadFilter(),g=AC.createGain();
-  s.buffer=noiseBuf;f.type=o.type||'bandpass';f.frequency.setValueAtTime(o.f||2000,t0);f.Q.value=o.q||1;
-  if(o.to)f.frequency.exponentialRampToValueAtTime(o.to,t0+dur);
-  const v=o.vol||0.2;
-  g.gain.setValueAtTime(0.0001,t0);g.gain.exponentialRampToValueAtTime(v,t0+(o.att||0.01));g.gain.exponentialRampToValueAtTime(0.0001,t0+dur);
-  s.connect(f);f.connect(g);g.connect(master);s.start(t0,Math.random());s.stop(t0+dur+0.05);
-}
+/* ---------- sound (engine in kit/kit.js) ---------- */
+const {tone,noise}=PS.sound;
+let AC=null,hiss=null;
+PS.sound.onReady((ac,out,buf)=>{
+  AC=ac;
+  const src=ac.createBufferSource();src.buffer=buf;src.loop=true;
+  const bp=ac.createBiquadFilter();bp.type='bandpass';bp.frequency.value=3800;bp.Q.value=0.7;
+  hiss=ac.createGain();hiss.gain.value=0;
+  src.connect(bp);bp.connect(hiss);hiss.connect(out);src.start();
+});
 const tinkle=(d=0)=>{const f=2300+Math.random()*1300;tone(f,0.4,{type:'triangle',vol:0.07,delay:d});tone(f*1.5,0.3,{vol:0.035,delay:d+0.03})};
 const bloop=(f,v=0.14,d=0)=>tone(f,0.13,{vol:v,to:f*2.3,delay:d});
 const whoosh=(up,d=0)=>noise(0.75,{f:up?500:3500,to:up?4000:400,q:1.2,vol:0.32,att:0.25,delay:d});
-function tick(t){tone(330*Math.pow(2,(t+20)/140*2.3),0.07,{type:'triangle',vol:0.07})}
+const tick=t=>PS.sound.tick((t+20)/140);
 const SIG=[
   ()=>{tinkle();tinkle(0.12);tinkle(0.24)},
   ()=>{bloop(420);bloop(560,0.14,0.16)},
@@ -431,43 +404,30 @@ function event(from,to){
     whoosh(true);tone(1760,0.7,{vol:0.06,delay:0.25});tone(2093,0.5,{vol:0.05,delay:0.45});
   }
 }
-let sayTimer=0;
-function say(text,delay=0){
-  if(muted||!('speechSynthesis' in window))return;
-  clearTimeout(sayTimer);
-  sayTimer=setTimeout(()=>{try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(text);u.rate=0.85;u.pitch=1.3;u.lang='en-US';speechSynthesis.speak(u)}catch(e){}},delay);
-}
 let nT=0,nB=0;
 function ambient(now,temp,a,b){
-  if(!AC)return;
-  if(muted){hissGain.gain.setTargetAtTime(0,AC.currentTime,0.1);return}
+  if(!hiss)return;
+  if(PS.sound.muted()){hiss.gain.setTargetAtTime(0,AC.currentTime,0.1);return}
   const iceAmt=1-a,wat=a*(1-b);
   if(iceAmt>0.5&&now>nT){tinkle();nT=now+1.2+Math.random()*1.8}
   if(wat>0.4&&now>nB){
     if(temp<60){bloop(240+Math.random()*160,0.08);nB=now+1.6+Math.random()*2}
     else{const rate=3+(temp-60)/40*14;bloop(320+Math.random()*600,0.06);nB=now+(0.5+Math.random())/rate}
   }
-  hissGain.gain.setTargetAtTime(0.07*b+0.035*cl((temp-85)/15)*wat,AC.currentTime,0.15);
+  hiss.gain.setTargetAtTime(0.07*b+0.035*cl((temp-85)/15)*wat,AC.currentTime,0.15);
 }
-let unlocked=false;
-function unlock(){
-  audioInit();
-  if(!unlocked){unlocked=true;try{if('speechSynthesis' in window){const u=new SpeechSynthesisUtterance(' ');u.volume=0;speechSynthesis.speak(u)}}catch(e){}}
-}
-document.addEventListener('pointerdown',unlock,true);
-document.addEventListener('keydown',unlock,true);
-document.addEventListener('visibilitychange',()=>{if(!AC)return;document.hidden?AC.suspend():AC.resume()});
 
 /* ---------- UI ---------- */
-const slider=$('temp'),num=$('num'),badge=$('badge'),hint=$('hint'),snd=$('sound');
+const slider=$('temp'),num=$('num'),numv=$('numv'),badge=$('badge'),hint=$('hint');
 const jumps=[$('j0'),$('j1'),$('j2')];
 let temp=+slider.value,p=0,shown=0,tw=null,lastTick=Math.round(temp/5);
-const BG=[[-20,'#C6EBFF'],[0,'#DDF3FF'],[50,'#FFF4D9'],[100,'#FFE2CF'],[120,'#FFD4BF']];
+// The stage warms with the temperature: icy sky when cold, a glow of flame-core when hot.
+const BG=[[-20,mix(SKY,ICE,0.5)],[0,mix(ICE,CARD,0.6)],[50,CARD],[100,mix(CARD,FL2,0.22)],[120,mix(CARD,FL2,0.38)]];
 function bgFor(t){for(let i=1;i<BG.length;i++)if(t<=BG[i][0]){const[a0,c0]=BG[i-1],[a1,c1]=BG[i];return mix(c0,c1,(t-a0)/(a1-a0))}return BG[BG.length-1][1]}
-function fmt(t){return(t<0?'−':'')+Math.abs(t)+'°'}
-function setTemp(t,fromUser){
-  temp=t;num.textContent=fmt(t);
-  document.documentElement.style.setProperty('--bg',bgFor(t));
+function setTemp(t){
+  temp=t;numv.textContent=(t<0?'−':'')+Math.abs(t);
+  slider.setAttribute('aria-valuetext',(t<0?'minus ':'')+Math.abs(t)+' degrees');
+  stage.style.backgroundColor=bgFor(t);
   placeHint();
   const tk=Math.round(t/5);if(tk!==lastTick){lastTick=tk;tick(t)}
 }
@@ -476,32 +436,31 @@ function placeHint(){
   hint.style.left='calc(36px + (100% - 72px) * '+f.toFixed(4)+')';
 }
 function hideHint(){hint.setAttribute('hidden','')}
-slider.addEventListener('input',()=>{tw=null;hideHint();setTemp(+slider.value,true)});
+slider.addEventListener('input',()=>{tw=null;hideHint();setTemp(+slider.value)});
 function showState(s,announce,from){
   badge.textContent=WORDS[s];
-  badge.style.background=[ICE,WATER,WHITE][s];badge.style.color=s===1?'#fff':INK;
-  document.documentElement.style.setProperty('--thumb',[ICE,WATER,WHITE][s]);
+  badge.classList.remove(...CHIP);badge.classList.add(CHIP[s]);
+  slider.style.setProperty('--thumb',FILL[s]);
   jumps.forEach((j,i)=>j.setAttribute('aria-current',i===s?'true':'false'));
   badge.classList.remove('pop');void badge.offsetWidth;badge.classList.add('pop');
-  if(announce){event(from,s);say(WORDS[s],from===1&&s===0?650:500)}
+  if(announce){event(from,s);PS.say(SAY[s],from===1&&s===0?650:500)}
 }
 const TARGET=[-15,45,112];
 jumps.forEach((j,i)=>j.addEventListener('click',()=>{
   hideHint();
-  if(i===shown&&Math.abs(temp-TARGET[i])<40&&((i===0&&temp<=0)||(i===1&&temp>0&&temp<100)||(i===2&&temp>=100))){SIG[i]();say(WORDS[i],250);return}
+  if(i===shown&&Math.abs(temp-TARGET[i])<40&&((i===0&&temp<=0)||(i===1&&temp>0&&temp<100)||(i===2&&temp>=100))){SIG[i]();PS.say(SAY[i],250);return}
   tw={from:temp,to:TARGET[i],t0:performance.now()/1000,dur:0.9};
 }));
-badge.addEventListener('click',()=>{SIG[shown]();say(WORDS[shown],200)});
-num.addEventListener('click',()=>{tick(temp);say((temp<0?'minus ':'')+Math.abs(temp)+' degrees')});
-function setMuted(m){
-  muted=m;snd.setAttribute('aria-pressed',m?'false':'true');
-  try{localStorage.setItem('iws-muted',m?'1':'0')}catch(e){}
-  if(master)master.gain.setTargetAtTime(m?0:0.9,AC.currentTime,0.05);
-  if(m&&'speechSynthesis' in window)try{speechSynthesis.cancel()}catch(e){}
-  if(!m){audioInit();tone(660,0.12,{vol:0.12});tone(990,0.15,{vol:0.12,delay:0.1})}
-}
-snd.addEventListener('click',()=>setMuted(!muted));
-setMuted(muted);
+badge.addEventListener('click',()=>{SIG[shown]();PS.say(SAY[shown],200)});
+num.addEventListener('click',()=>{tick(temp);PS.say((temp<0?'minus ':'')+Math.abs(temp)+' degrees')});
+PS.sound.button($('sound'));
+
+/* grown-ups corner: same button or a tap outside closes it */
+const gu=$('gu'),gup=$('gupanel');
+function guOpen(o){gup.hidden=!o;gu.setAttribute('aria-expanded',o?'true':'false')}
+gu.addEventListener('click',()=>{PS.sound.tok();guOpen(gup.hidden)});
+document.addEventListener('pointerdown',e=>{if(!gup.hidden&&!gup.contains(e.target)&&!gu.contains(e.target))guOpen(false)});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!gup.hidden){guOpen(false);gu.focus()}});
 
 /* ---------- loop ---------- */
 let last=performance.now()/1000,time=0;
@@ -509,7 +468,7 @@ function frame(ms){
   const now=ms/1000,dt=Math.min(1/20,now-last);last=now;time+=dt;
   if(tw){
     const u=cl((now-tw.t0)/tw.dur),v=Math.round(tw.from+(tw.to-tw.from)*ease(u));
-    if(v!==temp){slider.value=v;setTemp(v,true)}
+    if(v!==temp){slider.value=v;setTemp(v)}
     if(u>=1)tw=null;
   }
   const pt=temp<=0?0:temp<100?1:2;
@@ -518,11 +477,11 @@ function frame(ms){
   const s=p<0.5?0:p<1.5?1:2;
   if(s!==shown){const from=shown;shown=s;showState(s,true,from)}
   sim(dt,time,temp,a,b);
-  draw(time,temp,a,b,s);
+  draw(time,temp,a,b);
   ambient(now,temp,a,b);
   requestAnimationFrame(frame);
 }
-setTemp(temp,false);showState(0,false,0);
+setTemp(temp);showState(0,false,0);
 requestAnimationFrame(frame);
 })();
 </script>

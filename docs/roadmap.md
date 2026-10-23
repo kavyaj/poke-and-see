@@ -2,11 +2,11 @@
 
 Toys in build order. Every toy follows the house rules and the brand book.
 
-## 1. Ice, Water, Steam (live, needs a kit pass)
+## 1. Ice, Water, Steam (live, kit pass done)
 
 Slide the temperature from −20° to 120°. Ice melts and floats, water boils, steam rises. A magnifier zooms in on the molecules.
 
-Kit pass to do:
+Kit pass (done 23 October 2026):
 - Switch fonts and colours to `kit/tokens.css` and `kit/kit.css` (it still uses Baloo 2 and its own palette).
 - Redraw the molecules as real water (one `--atom-oxygen`, two `--atom-hydrogen`, see the Molecule component). Remove the faces.
 - Add the Home button (top left) and the grown-ups corner:

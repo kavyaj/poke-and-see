@@ -48,9 +48,9 @@ Build for kids' intellect, not their size. Real words ("steam", "molecules"), re
 6. Add its tile to `index.html` (art in real colours, name in capitals, `data-say` with the spoken name).
 7. Update `docs/roadmap.md`.
 
-## Shared code to extract
+## Shared code
 
-`toys/ice-water-steam/index.html` was built before the kit existed. Its sound engine, speech helper and mute toggle should move into `kit/kit.js` the first time a second toy needs them, then both toys use it.
+`kit/kit.js` holds the sound engine, speech helper and sound button (`PS.sound`, `PS.say`, `PS.token`). Toys load it after `kit/kit.css`. Ice, Water, Steam uses it; every new toy should too.
 
 ## Deploying
 
