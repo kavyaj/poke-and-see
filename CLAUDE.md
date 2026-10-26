@@ -46,7 +46,7 @@ Build for kids' intellect, not their size. Real words ("steam", "molecules"), re
 4. Write the grown-ups corner copy and show it to Kavya before shipping.
 5. Give the page its own `<title>` and `<meta name="description">` in the same style as `index.html`: a title of about 50 characters that names the toy and says it's for kids aged 3 to 5, and a description of about 155 characters in plain words that says what the kid does and sees, then the promise (no ads, no accounts, no tracking). Show both to Kavya with the grown-ups copy.
 6. Test at 1024x768 (tablet landscape), 768x1024 (tablet portrait) and 390x844 (phone). No sideways scroll, nothing under 64px to tap.
-7. Add its tile to `index.html` (art in real colours, name in capitals, `data-say` with the spoken name).
+7. Add its tile to `index.html` (art in real colours, name in capitals, `data-say` with the spoken name), and its URL to `sitemap.xml`.
 8. Update `docs/roadmap.md`.
 
 ## Shared code
