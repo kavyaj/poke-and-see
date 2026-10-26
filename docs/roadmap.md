@@ -27,8 +27,9 @@ As built:
 - Drop paint onto paint (anywhere the goo reaches across) and they squish together. The old colours swirl and settle into the mix, then it's spoken: "Blue and yellow make green."
 - Paint is mixed by amount, so a big white blob with a little blue makes light blue. Blobs grow as they mix, up to six dollops.
 - Pulling apart: drag from a mixed blob to pull off one dollop. It keeps the mixed colour, because real paint doesn't unmix. A pure dollop dropped back on its own well goes back in. CLEAN wipes the palette.
+- UNDO takes back the last change of paint: a mix, a dollop pulled off, paint put back in a well, or CLEAN (up to 40 steps). Moving a blob isn't a step. Paint that didn't change stays put; the rest fades back to how it was.
 - Tap any blob to hear its colour. The top bar shows the last colour word with a swatch; tap it to hear it again.
-- Colour words: RED, MAROON, PLUM, PINK, ORANGE, PEACH, BROWN, TAN, YELLOW, CREAM, OLIVE, LIME, GREEN, TEAL, BLUE, NAVY, LIGHT BLUE, PURPLE, LILAC, GREY, WHITE, BLACK. Picked by hue first, then lightness and colourfulness for the shade, and checked by eye against every mix of up to six dollops.
+- Colour names: 127 shades, everyday names (MINT, JADE, WATERMELON, BLACKBERRY) and colour plus a shade word (LIGHT BLUE, DARK TEAL, DUSTY ROSE), up to two words. Each shade is pinned to a real mix of the six paints, and a mix takes the name of the nearest one. The list was built by grouping all 806 mixes of up to six dollops into look-alike shades and naming each group, then checked by eye. Long single words shrink to fit the top bar on a phone.
 - Real results worth knowing: blue + green makes teal, red + blue makes a dark plum (cadmium red and ultramarine can't make a bright purple), pink + blue makes a real purple, yellow + black makes olive, red + green makes brown.
 - Pink (`--paint-pink`, #E5338C) was added on 23 October 2026 as the sixth paint so purple can be made. Picked from twelve deep pinks for the most colourful purple with blue, and lighter than red so the two are easy to tell apart.
 - spectral.js 3.0.0 is vendored in `kit/vendor/spectral/` with its licence.

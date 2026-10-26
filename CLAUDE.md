@@ -18,7 +18,7 @@ Build for kids' intellect, not their size. Real words ("steam", "molecules"), re
 ## House rules (every toy)
 
 1. One idea, one big control: a slider, a tap or a drag. Never a menu.
-2. No reading needed. Every word that matters is also spoken. On screen, only numbers and one-word labels.
+2. No reading needed. Every word that matters is also spoken. On screen, only numbers and one-word labels (colour names in Paint Mixer may be two words, like SKY BLUE).
 3. Instant and reversible. Every action shows its result straight away and can be undone.
 4. Sound for everything, but calm. Nothing plays before the first touch. Sound button top right on every toy, remembered.
 5. No hooks. No ads, accounts, analytics, cookies, timers or "keep going" nudges.

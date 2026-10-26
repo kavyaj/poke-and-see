@@ -37,8 +37,8 @@ button{touch-action:manipulation}
 @keyframes nudge{0%,100%{margin-left:-12px}50%{margin-left:12px}}
 
 /* clean the palette */
-.tools{display:flex;justify-content:center}
-.tools .ps-btn{min-width:min(100%,240px)}
+.tools{display:flex;justify-content:center;gap:var(--space-3)}
+.tools .ps-btn{flex:1 1 0;min-width:0;max-width:240px}
 
 /* grown-ups corner */
 .foot{position:relative;display:flex}
@@ -78,6 +78,8 @@ button{touch-action:manipulation}
   </div>
 
   <div class="tools">
+    <button class="ps-btn" id="undo" type="button">
+      <svg viewBox="0 0 48 48" aria-hidden="true"><path d="M11 19h18a10 10 0 0 1 0 20h-7" fill="none" stroke="var(--ink)" stroke-width="5" stroke-linecap="round"/><path d="M19 10l-9 9 9 9" fill="none" stroke="var(--ink)" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/></svg>UNDO</button>
     <button class="ps-btn" id="clean" type="button">
       <svg viewBox="0 0 48 48" aria-hidden="true"><rect x="6" y="14" width="36" height="22" rx="7" fill="var(--sand)" stroke="var(--ink)" stroke-width="3.5"/><g fill="var(--ink)" opacity=".35"><circle cx="15" cy="22" r="2.5"/><circle cx="25" cy="27" r="3"/><circle cx="34" cy="21" r="2"/><circle cx="33" cy="30" r="2.2"/><circle cx="16" cy="30" r="1.8"/></g></svg>CLEAN</button>
   </div>
@@ -121,43 +123,55 @@ function mixHex(comp){
   if(parts.length===1)return HEX[parts[0]];
   return spectral.mix(...parts.map(p=>[PURE[p],comp[p]])).toString();
 }
-// Name a mix by its lightness (L), colourfulness (C) and hue (h) in OKLCh: the hue picks the family,
-// then light and dark pick the shade (navy, maroon, lilac...). Tuned against every mix of up to six dollops.
-function colourWord(L,C,h){
-  if(L<0.27)return'BLACK';
-  if(C<(L>0.85?0.018:0.025))return L>0.95?'WHITE':L<0.32?'BLACK':'GREY';
-  if(h>=345||h<36){                       // reds, from the purple side round to the orange side
-    const r=h>=345?h-360:h;
-    if(L>0.66)return'PINK';
-    if(r<0&&C<0.08)return L<0.48?'PLUM':'PURPLE';
-    if(r<5)return L<0.45?'PLUM':'PINK';     // bright pinks and magentas, from the pink paint
-    if(r>=20&&C<0.11)return L>0.6&&C<0.09?'TAN':'BROWN';
-    if(L<0.45)return r<8?'PLUM':'MAROON';
-    if(C<0.11)return L>0.55?'PINK':'MAROON';
-    return'RED';
-  }
-  if(h<72){                               // oranges
-    if(L>0.8)return C<0.07?'TAN':'PEACH';
-    if(L<0.55||C<0.1||(L<0.62&&C<0.14))return L>0.7?'TAN':'BROWN';
-    return'ORANGE';
-  }
-  if(h<125){                              // yellows, then yellow-greens
-    if(L>0.9)return C<0.05?'CREAM':'YELLOW';
-    if(h>=105)return L<0.68||C<0.1?'OLIVE':'LIME';
-    if(L<0.7)return h<95?'BROWN':'OLIVE'; // yellow and black really do make an olive green
-    return C<0.1?'TAN':'YELLOW';
-  }
-  if(h<152)return'GREEN';
-  if(h<222)return'TEAL';                  // blue-greens
-  if(h<278)return L>0.68?'LIGHT BLUE':L<0.36?'NAVY':'BLUE';
-  if(h>=325)return L>0.66?'PINK':'PURPLE'; // pink-side purples: pale ones read as pink, not lilac
-  return L>0.66?'LILAC':'PURPLE';
-}
+// Shade names, each pinned to a real mix of the six paints, checked by eye against every mix of up to six dollops.
+// A mix takes the name of the nearest shade in OKLab, with hue and colourfulness counted twice.
+const SHADES=[
+  // reds and pinks
+  ['RED','#DC3337'],['CHERRY','#BC3235'],['DARK RED','#A33636'],['DARK CHERRY','#8E323B'],['LIGHT RED','#D36466'],
+  ['TOMATO','#EB5043'],['CORAL','#F46B5E'],['WATERMELON','#F46478'],['STRAWBERRY','#E74361'],['CRANBERRY','#C8465B'],
+  ['SALMON','#FA8991'],['BRICK RED','#BD4D48'],['RUST','#A25142'],['DARK RUST','#8C3D33'],['MAROON','#74303A'],
+  ['DARK MAROON','#5E2F36'],['RED BROWN','#743E43'],['DULL RED','#904A4E'],['ROSY BROWN','#9F615D'],
+  ['DUSTY ROSE','#BB696F'],['DUSTY PINK','#D3868F'],['DARK ROSE','#A44A5D'],['ROSE','#BB4A71'],
+  ['RASPBERRY','#E73C7C'],['DARK RASPBERRY','#A23960'],['BLUSH','#F4B4C0'],
+  ['PINK','#EA3D96'],['HOT PINK','#F358A7'],['DEEP PINK','#C83D88'],['BUBBLEGUM','#FC80BB'],['LIGHT PINK','#FFA4CC'],
+  ['BABY PINK','#F7C7E2'],['MAGENTA','#A74089'],['BERRY','#954675'],['ORCHID','#D165A9'],
+  ['MAUVE','#B87A9D'],['PALE MAUVE','#CEA9BC'],['DUSTY MAUVE','#B28E9D'],['DARK MAUVE','#84596E'],
+  ['DARK PLUM','#5E354C'],['DUSTY PLUM','#6B4C57'],['BLACKBERRY','#442E37'],
+  // oranges and browns
+  ['ORANGE','#F06436'],['BURNT ORANGE','#D0613A'],['PUMPKIN','#F37B39'],['LIGHT ORANGE','#F39135'],
+  ['PEACH','#F59878'],['LIGHT PEACH','#F5BA91'],['PALE PEACH','#FDD0AB'],['APRICOT','#FCBB60'],
+  ['COPPER','#B0613C'],['CARAMEL','#B9793F'],['BROWN','#7F5B38'],['COCOA','#7A503D'],['CHOCOLATE','#654139'],
+  ['LIGHT BROWN','#957454'],['TAN','#BF9D79'],['MUD','#756147'],
+  // yellows and olives
+  ['MANGO','#F8AD2F'],['GOLD','#DBA139'],['DARK GOLD','#C1A63B'],['MUSTARD','#BA9336'],['DARK MUSTARD','#A38439'],
+  ['YELLOW','#F5C518'],['LIGHT YELLOW','#F7D138'],['PALE YELLOW','#F8F29C'],['DARK YELLOW','#D6C129'],
+  ['OLIVE','#817139'],['DARK OLIVE','#544E3C'],['OLIVE GREEN','#97983A'],['PALE OLIVE','#B5BB87'],
+  // greens
+  ['LIME','#B2B738'],['PEAR','#CCD15E'],['LIGHT GREEN','#C8DC9A'],['MOSS','#778041'],['DARK MOSS','#58673A'],
+  ['GREEN','#7EA445'],['LEAF GREEN','#4D824C'],['GREY GREEN','#5F6F56'],['SAGE','#7C947C'],['DARK SAGE','#3E4B3E'],
+  ['FOREST GREEN','#385A40'],['MINT','#84B186'],['LIGHT MINT','#92C49D'],['JADE','#4C8F63'],['SEA GREEN','#31724B'],
+  ['PINE GREEN','#386454'],
+  // blue-greens
+  ['TEAL','#307768'],['DARK TEAL','#1C6154'],['LIGHT TEAL','#539787'],['DUSTY TEAL','#416C69'],
+  ['TEAL BLUE','#21696D'],['OCEAN BLUE','#12585C'],['DEEP TEAL','#0C5364'],
+  // blues
+  ['BLUE','#1D3F9E'],['DEEP BLUE','#263E8E'],['ROYAL BLUE','#375AB0'],['CORNFLOWER','#5482D1'],
+  ['LIGHT BLUE','#699BD1'],['SKY BLUE','#9BC0E0'],['BABY BLUE','#C8DEF2'],['DENIM','#445B8A'],
+  ['DUSTY BLUE','#7581AD'],['NAVY','#2A3B64'],['MIDNIGHT BLUE','#333446'],['SLATE','#405461'],['STEEL BLUE','#6E90A7'],
+  // purples
+  ['INDIGO','#3D3C71'],['PURPLE','#554497'],['DARK PURPLE','#493A55'],['DUSTY PURPLE','#5E5A7B'],
+  ['LIGHT PURPLE','#8E72C3'],['PERIWINKLE','#8F8ED4'],['LAVENDER','#948DAE'],['LILAC','#C7B4E1'],
+  ['VIOLET','#824697'],['LIGHT VIOLET','#CB84C7'],['GRAPE','#5D3A69'],['PLUM','#784175'],
+  // greys
+  ['WHITE','#FAFAF6'],['PALE GREY','#D6E2EA'],['LIGHT GREY','#C2C9CC'],['GREY','#A1AAAE'],['DARK GREY','#717378'],
+  ['WARM GREY','#918087'],['CHARCOAL','#45413D'],['BLACK','#222222']
+].map(([w,h])=>[w,new spectral.Color(h).OKLab]);
 function nameFor(comp,hex){
   const parts=PIG.filter(p=>comp[p]>1e-6);
   if(parts.length===1)return parts[0].toUpperCase();
-  const [L,C,h]=new spectral.Color(hex).OKLCh;
-  return colourWord(L,C,h);
+  const L=new spectral.Color(hex).OKLab;let best='',bd=1e9;
+  for(const [w,o] of SHADES){const d=(L[0]-o[0])**2+4*((L[1]-o[1])**2+(L[2]-o[2])**2);if(d<bd){bd=d;best=w}}
+  return best;
 }
 const neckMix=new Map();
 function midHex(a,b){const k=a+b;if(!neckMix.has(k))neckMix.set(k,spectral.mix([new spectral.Color(a),1],[new spectral.Color(b),1]).toString());return neckMix.get(k)}
@@ -214,7 +228,7 @@ function resize(){
   if(!wells.length)wells=PIG.map(p=>{const b=blob({[p]:1},0,0,1);b.well=true;return b});
   wells.forEach((b,i)=>{b.x=W/2+(i%cols-(cols-1)/2)*gap;b.y=wy+Math.floor(i/cols)*rowH;b.r=wellR});
   for(const b of blobs){b.x*=fx;b.y*=fy;b.r=rT(b)}
-  placeHint();
+  placeHint();fitName();
 }
 new ResizeObserver(resize).observe(stage);
 
@@ -326,7 +340,9 @@ const snd={
   pat(){noise(0.08,{type:'lowpass',f:500,vol:0.13});tone(130,0.08,{vol:0.08,to:90})},
   // the mixing signature: a wet squelch that swirls up
   squish(){noise(0.38,{f:260,to:1100,q:3,vol:0.24,att:0.04});tone(180,0.32,{vol:0.1,to:260});tone(320,0.2,{vol:0.06,delay:0.22,to:520})},
-  wipe(){noise(0.6,{f:2400,to:500,q:0.8,vol:0.22,att:0.12});noise(0.5,{f:1800,to:400,q:0.8,vol:0.14,att:0.1,delay:0.25})}
+  wipe(){noise(0.6,{f:2400,to:500,q:0.8,vol:0.22,att:0.12});noise(0.5,{f:1800,to:400,q:0.8,vol:0.14,att:0.1,delay:0.25})},
+  // undo: a squish played backwards, falling instead of rising
+  undo(){noise(0.3,{f:1000,to:300,q:3,vol:0.18,att:0.03});tone(520,0.22,{vol:0.09,to:240})}
 };
 const lower=w=>w.toLowerCase();
 const cap=s=>s[0].toUpperCase()+s.slice(1);
@@ -336,8 +352,15 @@ const nameBtn=$('name'),namev=$('namev'),swatch=$('swatch'),word=$('word');
 let lastSay='';
 function show(b,say,delay=0){
   namev.textContent=b.word;swatch.setAttribute('fill',b.hex);nameBtn.removeAttribute('data-empty');
-  word.textContent=b.word;lastSay=say;PS.say(say,delay);
+  word.textContent=b.word;lastSay=say;PS.say(say,delay);fitName();
 }
+// Two-word names wrap onto two lines; a long single word (WATERMELON) shrinks until it fits.
+function fitName(){
+  nameBtn.style.fontSize='';
+  let f=parseFloat(getComputedStyle(nameBtn).fontSize);
+  while(nameBtn.scrollWidth>nameBtn.clientWidth+1&&f>18){f-=2;nameBtn.style.fontSize=f+'px'}
+}
+function hideName(){nameBtn.setAttribute('data-empty','');lastSay=''}
 nameBtn.addEventListener('click',()=>{if(lastSay){PS.sound.tok();PS.say(lastSay)}});
 
 /* ---------- hands ---------- */
@@ -406,7 +429,7 @@ function release(e){
   for(const w of wells){
     if(Math.hypot(w.x-b.x,w.y-b.y)<wellR+b.r*0.6&&b.amount===1&&b.hex===w.hex){best=w;break}
   }
-  if(best){b.merge={into:best,t:0,x0:b.x,y0:b.y,back:best.well};return}
+  if(best){save(b,best);b.merge={into:best,t:0,x0:b.x,y0:b.y,back:best.well};return}
   snd.pat();squash(b,0.8);
 }
 cv.addEventListener('pointerup',release);
@@ -427,15 +450,49 @@ function mixInto(a,b){
 }
 
 /* ---------- clean the palette ---------- */
-$('clean').addEventListener('click',()=>{
-  hideHint();
-  for(const [id,g] of drags){g.b.held=false;try{cv.releasePointerCapture(id)}catch(e){}}
+function letGo(){
+  for(const [id,g] of drags){g.b.held=false;if(g.b.src){g.b.fade=0.001;g.b.src=null}try{cv.releasePointerCapture(id)}catch(e){}}
   drags.clear();
-  if(!blobs.length){PS.sound.tok();wells.forEach(w=>jiggle(w,1));return}
+}
+$('clean').addEventListener('click',()=>{
+  hideHint();letGo();
+  if(!real().length){PS.sound.tok();wells.forEach(w=>jiggle(w,1));return}
+  save();
   for(const b of blobs){b.fade=b.fade||0.001;b.src=null;b.near=null;b.merge=null}
   snd.wipe();wells.forEach(w=>jiggle(w,0.8));
-  nameBtn.setAttribute('data-empty','');lastSay='';
-  word.textContent='Clean';PS.say('Clean',350);
+  hideName();word.textContent='Clean';PS.say('Clean',350);
+});
+
+/* ---------- undo ---------- */
+// Every change of paint (a mix, a dollop pulled off, paint put back in its well, CLEAN) saves the palette first.
+// Moving a blob around isn't a change, so it isn't saved.
+const history=[],MAXSTEPS=40;
+const real=()=>blobs.filter(b=>!b.fade&&!b.src&&!(b.merge&&b.merge.back&&!b.merge.into.well));
+// moved: the blob just dropped onto paint. It comes back beside that paint, not on top of it.
+function save(moved,onto){
+  history.push(real().map(b=>{
+    let x=b.x,y=b.y;
+    if(b===moved&&onto&&!onto.well){const dx=b.x-onto.x,dy=b.y-onto.y,d=Math.hypot(dx,dy)||1,r=onto.r+b.r+12;x=onto.x+dx/d*r;y=onto.y+dy/d*r}
+    return {comp:{...b.comp},amount:b.amount,fx:x/W,fy:y/H};
+  }));
+  if(history.length>MAXSTEPS)history.shift();
+}
+const same=(b,s)=>b.amount===s.amount&&PIG.every(p=>Math.abs(b.comp[p]-s.comp[p])<1e-9);
+$('undo').addEventListener('click',()=>{
+  hideHint();letGo();
+  const snap=history.pop();
+  if(!snap){PS.sound.tok();return}
+  // Paint that didn't change stays where it is; the rest fades out and the old paint comes back.
+  const pool=real(),next=[];
+  for(const s of snap){
+    let m=null,md=1e9;
+    for(const b of pool)if(same(b,s)){const d=Math.hypot(b.x-s.fx*W,b.y-s.fy*H);if(d<md){md=d;m=b}}
+    if(m){pool.splice(pool.indexOf(m),1);next.push(m)}
+    else{const b=blob(s.comp,s.fx*W,s.fy*H,s.amount);b.r*=0.6;jiggle(b,1.5);next.push(b)}
+  }
+  for(const b of blobs)if(!next.includes(b)){b.fade=b.fade||0.001;b.src=null;b.near=null;b.merge=null;next.push(b)}
+  blobs=next;
+  snd.undo();hideName();word.textContent='Undo';PS.say('Undo',250);
 });
 
 /* grown-ups corner: same button or a tap outside closes it */
@@ -457,6 +514,7 @@ function step(dt){
       const s=b.src,f=Math.hypot(b.x-s.x,b.y-s.y)/((s.r+b.r)*1.7);
       const tk=Math.floor(f*4);if(tk>g.tick&&tk<4){g.tick=tk;PS.sound.tick(tk/4)}
       if(f>=1){
+        save();
         b.src=null;g.src=null;g.moved=true;snd.plip();jiggle(s,1.6);jiggle(b,1.6);
         if(!s.well){
           for(const p of PIG)s.comp[p]*=(s.amount-1)/s.amount;
