@@ -106,8 +106,12 @@
   .end { display: flex; flex-direction: column; align-items: flex-start; gap: var(--space-6); }
   .end .ps-btn { text-decoration: none; }
   footer { margin-top: var(--space-16); padding-top: var(--space-4); border-top: 2px solid var(--line); font-size: 14px; color: var(--ink-soft); }
-  footer .tip { margin-bottom: var(--space-2); }
-  footer .tip a { display: inline-block; padding: 12px 0; margin-left: 4px; font-weight: 600; color: var(--ink); }
+  .tipcard { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--space-4) var(--space-8);
+    background: var(--tap-soft); border: var(--stroke-control) solid var(--ink); border-radius: var(--radius-l); padding: var(--space-6) var(--space-8); }
+  .tipcard .txt { flex: 1 1 18rem; display: flex; flex-direction: column; gap: var(--space-2); }
+  .tipcard .title { margin: 0; }
+  .tipcard p { font-size: 17px; line-height: 1.5; }
+  .tipcard .ps-btn { text-decoration: none; }
 
   html { scroll-behavior: smooth; }
   @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
@@ -171,6 +175,15 @@
         <p>I wanted him to understand it with his hands. And then I wanted him to put the tablet down and go and look at a real ice cube.</p>
         <p>That's the whole idea. One question, one small toy that answers it, a grown-up sitting next to them, and a reason to look at the real world afterwards.</p>
         <div class="sigrow"><p class="sig">Kavya, parent and maker of Poke &amp; See</p><p class="social"><a href="https://www.linkedin.com/in/kavya-jahagirdar/" target="_blank" rel="noopener">LinkedIn</a><a href="https://x.com/kavyaj93" target="_blank" rel="noopener">X (Twitter)</a></p></div>
+      </div>
+    </section>
+    <section class="col">
+      <div class="tipcard">
+        <div class="txt">
+          <h2 class="title">Free for little hands.</h2>
+          <p>If your kid loved it, a tip helps me make the next toy. No ads, no accounts, no tracking, ever.</p>
+        </div>
+        <a class="ps-btn ps-btn--tap" href="https://ko-fi.com/kavyaj?ref=pokeandsee" target="_blank" rel="noopener">SAY THANKS</a>
       </div>
     </section>
     <section>
@@ -284,10 +297,7 @@
     </div>
   </main>
 
-  <footer>
-    <p class="tip">Free for little hands. If your kid loved it, a tip helps me make the next toy. <a href="https://ko-fi.com/kavyaj?ref=pokeandsee" target="_blank" rel="noopener">Say thanks</a></p>
-    <p>No ads. No accounts. No tracking. Just toys.</p>
-  </footer>
+  <footer>No ads. No accounts. No tracking. Just toys.</footer>
 </div>
 <script>
   // Tapping a tile says its name, then opens the toy.
