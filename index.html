@@ -106,6 +106,8 @@
   .end { display: flex; flex-direction: column; align-items: flex-start; gap: var(--space-6); }
   .end .ps-btn { text-decoration: none; }
   footer { margin-top: var(--space-16); padding-top: var(--space-4); border-top: 2px solid var(--line); font-size: 14px; color: var(--ink-soft); }
+  footer .tip { margin-bottom: var(--space-2); }
+  footer .tip a { display: inline-block; padding: 12px 0; margin-left: 4px; font-weight: 600; color: var(--ink); }
 
   html { scroll-behavior: smooth; }
   @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
@@ -282,7 +284,10 @@
     </div>
   </main>
 
-  <footer>No ads. No accounts. No tracking. Just toys.</footer>
+  <footer>
+    <p class="tip">Free for little hands. If your kid loved it, a tip helps me make the next toy. <a href="https://ko-fi.com/kavyaj?ref=pokeandsee" target="_blank" rel="noopener">Say thanks</a></p>
+    <p>No ads. No accounts. No tracking. Just toys.</p>
+  </footer>
 </div>
 <script>
   // Tapping a tile says its name, then opens the toy.
