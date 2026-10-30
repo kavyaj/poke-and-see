@@ -71,12 +71,31 @@ PS.sound = {
 };
 
 /* ---------- speech ---------- */
+// An en-US voice that runs on the device. Left to choose, some browsers pick an online voice,
+// which waits on the network and sends the words away.
+let voice = null;
+function pickVoice() {
+  try {
+    const vs = speechSynthesis.getVoices().filter(v => v.localService && /^en[-_]US$/i.test(v.lang));
+    voice = vs.find(v => v.default) || vs[0] || null;
+  } catch (e) { voice = null; }
+}
+if ('speechSynthesis' in window) { pickVoice(); try { speechSynthesis.addEventListener('voiceschanged', pickVoice); } catch (e) {} }
+
+function speak(text) {
+  if (muted) return;
+  try { const u = new SpeechSynthesisUtterance(text); if (voice) u.voice = voice; u.rate = 0.85; u.pitch = 1; u.lang = 'en-US'; speechSynthesis.speak(u); } catch (e) {}
+}
 let sayTimer = 0;
 PS.say = function (text, delay = 0) {
   if (muted || !('speechSynthesis' in window)) return;
   clearTimeout(sayTimer);
   sayTimer = setTimeout(() => {
-    try { speechSynthesis.cancel(); const u = new SpeechSynthesisUtterance(text); u.rate = 0.85; u.pitch = 1; u.lang = 'en-US'; speechSynthesis.speak(u); } catch (e) {}
+    // cancel() straight before speak() stalls or drops the new word in Chrome and Safari,
+    // so only cancel when something is playing, then give the engine a moment.
+    let busy = false;
+    try { busy = speechSynthesis.speaking || speechSynthesis.pending; if (busy) speechSynthesis.cancel(); } catch (e) {}
+    if (busy) sayTimer = setTimeout(() => speak(text), 60); else speak(text);
   }, delay);
 };
 
