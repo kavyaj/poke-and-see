@@ -588,10 +588,13 @@ snd.addEventListener('click', () => { unlock(); setMuted(!muted); });
 snd.setAttribute('aria-pressed', muted ? 'false' : 'true');
 document.addEventListener('visibilitychange', () => { if (!AC) return; document.hidden ? AC.suspend() : AC.resume(); });
 
-/* grown-ups */
-const gu = $('gu'), guPanel = $('guPanel');
-gu.addEventListener('click', e => { e.stopPropagation(); const open = guPanel.hidden; guPanel.hidden = !open; gu.setAttribute('aria-expanded', open ? 'true' : 'false'); });
-document.addEventListener('pointerdown', e => { if (!guPanel.hidden && !e.target.closest('.gu-wrap')) { guPanel.hidden = true; gu.setAttribute('aria-expanded', 'false'); } });
+/* grown-ups and credits: one panel open at a time, a tap anywhere else closes it */
+const panels = [[$('gu'), $('guPanel')], [$('credits'), $('creditsPanel')]];
+function togglePanel(btn) {
+  for (const [b, p] of panels) { const open = b === btn && p.hidden; p.hidden = !open; b.setAttribute('aria-expanded', open ? 'true' : 'false'); }
+}
+for (const [b] of panels) b.addEventListener('click', e => { e.stopPropagation(); togglePanel(b); });
+document.addEventListener('pointerdown', e => { if (!e.target.closest('.gu-wrap')) togglePanel(null); });
 
 /* ---------------- start: a small Earth at once, then sharper pictures, then the map ---------------- */
 { const h = homeView(); view.lon = h.lon - 40 * DEG; view.lat = h.lat; flyTo(h.lon, h.lat); }

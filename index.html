@@ -27,6 +27,43 @@
 <meta name="twitter:description" content="Tiny science toys for kids aged 3 to 5. Poke something, see what happens, then go try it for real. No ads, no accounts, no tracking.">
 <meta name="twitter:image" content="https://pokeandsee.com/assets/og-image.png">
 <meta name="twitter:image:alt" content="A poke sending ripples past an ice cube, a water drop, paint, a seedling and the Earth.">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebSite",
+      "@id": "https://pokeandsee.com/#website",
+      "name": "Poke & See",
+      "url": "https://pokeandsee.com/",
+      "description": "Ad-free science toys for kids aged 3 to 5. Poke, slide and tap to watch ice melt into steam, then try it for real. No accounts, no tracking, made to put down.",
+      "inLanguage": "en",
+      "publisher": { "@id": "https://pokeandsee.com/#kavya" }
+    },
+    {
+      "@type": "Person",
+      "@id": "https://pokeandsee.com/#kavya",
+      "name": "Kavya Jahagirdar",
+      "url": "https://kavya.garden",
+      "sameAs": [
+        "https://www.linkedin.com/in/kavya-jahagirdar/",
+        "https://x.com/kavyaj93"
+      ]
+    },
+    {
+      "@type": "ItemList",
+      "name": "Toys",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "url": "https://pokeandsee.com/toys/ice-water-steam/", "name": "Ice, Water, Steam" },
+        { "@type": "ListItem", "position": 2, "url": "https://pokeandsee.com/toys/paint-mixer/", "name": "Paint Mixer" },
+        { "@type": "ListItem", "position": 3, "url": "https://pokeandsee.com/toys/globe/", "name": "World Globe" }
+      ]
+    }
+  ]
+}
+</script>
+<link rel="preload" href="kit/fonts/Syne-500.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="kit/fonts/Andika-700.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="kit/tokens.css">
 <link rel="stylesheet" href="kit/kit.css">
 <style>
@@ -137,7 +174,7 @@
 <body>
 <div class="about">
   <header class="top">
-    <a href="#toys"><img src="kit/logo/poke-and-see-lockup.svg" alt="Poke & See"></a>
+    <a href="#toys"><img src="kit/logo/poke-and-see-lockup.svg" alt="Poke & See" width="668" height="120"></a>
     <nav class="nav" aria-label="Main"><a href="#toys" aria-current="page">Toys</a><a href="#grown-ups">For grown-ups</a></nav>
   </header>
 
@@ -153,6 +190,10 @@
       <svg class="ps-tile-art" viewBox="0 0 240 180" aria-hidden="true"><rect width="240" height="180" fill="var(--paper)"/><circle cx="96" cy="86" r="40" fill="var(--paint-blue)"/><circle cx="146" cy="86" r="40" fill="var(--paint-yellow)"/><path d="M121 55a40 40 0 0 1 0 62a40 40 0 0 1 0-62z" fill="#63963F"/></svg>
       <span class="ps-tile-name">PAINT</span>
     </a>
+    <a class="ps-tile" href="toys/globe/" data-say="Earth">
+      <svg class="ps-tile-art" viewBox="0 0 240 180" aria-hidden="true"><rect width="240" height="180" fill="var(--sky-night)"/><circle cx="34" cy="30" r="2.5" fill="var(--star)"/><circle cx="206" cy="40" r="2" fill="var(--star)"/><circle cx="198" cy="150" r="2.5" fill="var(--star)"/><circle cx="44" cy="142" r="2" fill="var(--star)"/><g transform="translate(48 18) scale(3)"><circle cx="24" cy="24" r="19" fill="var(--ocean)" stroke="var(--ink)" stroke-width="1.7"/><path d="M14 13c4 1 6 4 5 8s-5 4-6 8c-1 3 1 6 3 8-6-3-9-10-7-17 1-3 3-5 5-7zM28 9c5 1 9 5 10 9-3 0-5 2-7 1-2-2 0-5-3-6-2-1-1-3 0-4zM29 26c3-1 6 1 6 4 0 4-3 7-6 8 0-3-2-5-2-7 0-2 1-4 2-5z" fill="var(--grass)"/><ellipse cx="15" cy="14" rx="6" ry="3.5" transform="rotate(-40 15 14)" fill="var(--card)" opacity=".3"/></g></svg>
+      <span class="ps-tile-name">EARTH</span>
+    </a>
     <span class="ps-tile ps-tile--soon" aria-label="Shadow, coming soon">
       <svg class="ps-tile-art" viewBox="0 0 240 180" aria-hidden="true"><rect width="240" height="180" fill="var(--sky-day)"/><circle cx="170" cy="50" r="20" fill="var(--sun)"/><rect y="132" width="240" height="48" fill="var(--grass)"/><rect x="66" y="78" width="12" height="56" fill="var(--bark)"/><circle cx="72" cy="70" r="28" fill="var(--leaf)"/><path d="M78 134 L20 160 L32 168 L84 136z" fill="rgba(27,35,51,.28)"/></svg>
       <span class="soon-tag" aria-hidden="true">Coming soon</span>
@@ -163,7 +204,7 @@
 
     <div class="grownups" id="grown-ups">
       <div class="col">
-        <span class="tag"><img src="kit/icons/grown-ups.svg" alt="">For grown-ups</span>
+        <span class="tag"><img src="kit/icons/grown-ups.svg" alt="" width="24" height="24">For grown-ups</span>
         <h1>Small toys for big questions.</h1>
         <p class="lead">Poke &amp; See is a shelf of tiny science toys for kids aged 3 to 5. Each one does one thing. Your kid pokes it, sees what happens, and then gets to go and do something else.</p>
       </div>
@@ -193,22 +234,22 @@
       </div>
       <div class="grid2">
         <article class="belief">
-          <img src="kit/icons/grown-ups.svg" alt="">
+          <img src="kit/icons/grown-ups.svg" alt="" width="48" height="48">
           <h3>Kids can handle real words</h3>
           <p>We say steam, molecules, shadow and pigment. Real numbers with real units, like 100°C. Simplified, but never wrong.</p>
         </article>
         <article class="belief">
-          <img src="kit/icons/globe.svg" alt="">
+          <img src="kit/icons/globe.svg" alt="" width="48" height="48">
           <h3>The real world is the show</h3>
           <p>Oceans look like oceans and leaves look like leaves. A water molecule is one oxygen and two hydrogens, not a blob with a smiley face.</p>
         </article>
         <article class="belief">
-          <img src="kit/icons/paint.svg" alt="">
+          <img src="kit/icons/paint.svg" alt="" width="48" height="48">
           <h3>Poke first, words later</h3>
           <p>Every toy does something the moment it's touched. Kids work it out with their hands, and the words catch up. No reading needed: everything important is spoken aloud.</p>
         </article>
         <article class="belief">
-          <img src="kit/icons/sun.svg" alt="">
+          <img src="kit/icons/sun.svg" alt="" width="48" height="48">
           <h3>Finding out is the reward</h3>
           <p>No stars, no points, no "Great job!". If your kid gasps when the ice melts, the toy has done its job.</p>
         </article>
@@ -277,6 +318,13 @@
           <div class="body">
             <span class="name">PAINT</span>
             <p>Squish blue and yellow paint together with your fingers. Then guess what red and yellow will make before you try.</p>
+          </div>
+        </article>
+        <article class="twin">
+          <svg viewBox="0 0 240 180" aria-hidden="true"><rect width="240" height="180" fill="var(--sky-night)"/><circle cx="34" cy="30" r="2.5" fill="var(--star)"/><circle cx="206" cy="40" r="2" fill="var(--star)"/><circle cx="198" cy="150" r="2.5" fill="var(--star)"/><circle cx="44" cy="142" r="2" fill="var(--star)"/><g transform="translate(48 18) scale(3)"><circle cx="24" cy="24" r="19" fill="var(--ocean)" stroke="var(--ink)" stroke-width="1.7"/><path d="M14 13c4 1 6 4 5 8s-5 4-6 8c-1 3 1 6 3 8-6-3-9-10-7-17 1-3 3-5 5-7zM28 9c5 1 9 5 10 9-3 0-5 2-7 1-2-2 0-5-3-6-2-1-1-3 0-4zM29 26c3-1 6 1 6 4 0 4-3 7-6 8 0-3-2-5-2-7 0-2 1-4 2-5z" fill="var(--grass)"/><ellipse cx="15" cy="14" rx="6" ry="3.5" transform="rotate(-40 15 14)" fill="var(--card)" opacity=".3"/></g></svg>
+          <div class="body">
+            <span class="name">EARTH</span>
+            <p>Check the sticker on a banana or an apple. Where did it grow? Find that country on the globe.</p>
           </div>
         </article>
         <article class="twin">

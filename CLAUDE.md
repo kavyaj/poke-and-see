@@ -44,9 +44,9 @@ Build for kids' intellect, not their size. Real words ("steam", "molecules"), re
 2. Build the World first with World tokens, lit from the top left. Frame controls come from `kit/kit.css`.
 3. Wire sound: tap "tok", value ticks with rising pitch, a signature sound per state change, then the spoken word.
 4. Write the grown-ups corner copy and show it to Kavya before shipping.
-5. Give the page its own `<title>` and `<meta name="description">` in the same style as `index.html`: a title of about 50 characters that names the toy and says it's for kids aged 3 to 5, and a description of about 155 characters in plain words that says what the kid does and sees, then the promise (no ads, no accounts, no tracking). Show both to Kavya with the grown-ups copy.
+5. Give the page its own `<title>` and `<meta name="description">` in the same style as `index.html`: a title of about 50 characters that names the toy and says it's for kids aged 3 to 5, and a description of about 155 characters in plain words that says what the kid does and sees, then the promise (no ads, no accounts, no tracking). Show both to Kavya with the grown-ups copy. Every toy page also gets the canonical link, the Open Graph and Twitter tags, the icon and manifest links, and one JSON-LD block with a `LearningResource` (its own `teaches`) and a `BreadcrumbList` (Poke & See → the toy): copy them from an existing toy's `<head>` and change the title, description, URL and name. Plus one screen-reader-only `<h1 class="sr">`.
 6. Test at 1024x768 (tablet landscape), 768x1024 (tablet portrait) and 390x844 (phone). No sideways scroll, nothing under 64px to tap.
-7. Add its tile to `index.html` (art in real colours, name in capitals, `data-say` with the spoken name), and its URL to `sitemap.xml`.
+7. Add its tile to `index.html` (art in real colours, name in capitals, `data-say` with the spoken name), its real-world twin, its entry in the home page's `ItemList` JSON-LD, and its URL to `sitemap.xml`.
 8. Update `docs/roadmap.md`.
 
 ## Shared code

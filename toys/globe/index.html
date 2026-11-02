@@ -3,14 +3,80 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>World Globe | Poke & See</title>
-<meta name="description" content="Spin a real Earth with your finger and zoom in close. Tap any country to see its flag and hear its name, or tap the sea to hear what it's called. Day and night shown as they are right now. A geography toy for kids aged 3 to 5.">
+<title>World Globe: Tap a Country, Hear Its Name | Poke & See</title>
+<meta name="description" content="Spin the real Earth and tap any country to see its flag and hear its name. Zoom in close and tap the sea to hear which ocean it is. For kids aged 3 to 5.">
+<link rel="canonical" href="https://pokeandsee.com/toys/globe/">
+<meta name="theme-color" content="#F2F6F7">
 <link rel="icon" href="../../kit/logo/poke-and-see-mark.svg" type="image/svg+xml">
+<link rel="icon" href="../../assets/favicon-32.png" type="image/png" sizes="32x32">
+<link rel="apple-touch-icon" href="../../assets/apple-touch-icon.png" sizes="180x180">
+<link rel="manifest" href="../../site.webmanifest">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Poke &amp; See">
+<meta property="og:url" content="https://pokeandsee.com/toys/globe/">
+<meta property="og:title" content="World Globe: Tap a Country, Hear Its Name | Poke &amp; See">
+<meta property="og:description" content="Spin the real Earth and tap any country to see its flag and hear its name. Zoom in close and tap the sea to hear which ocean it is. For kids aged 3 to 5.">
+<meta property="og:image" content="https://pokeandsee.com/assets/og-image.png">
+<meta property="og:image:type" content="image/png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="A poke sending ripples past an ice cube, a water drop, paint, a seedling and the Earth.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:creator" content="@kavyaj93">
+<meta name="twitter:title" content="World Globe: Tap a Country, Hear Its Name | Poke &amp; See">
+<meta name="twitter:description" content="Spin the real Earth and tap any country to see its flag and hear its name. Zoom in close and tap the sea to hear which ocean it is. For kids aged 3 to 5.">
+<meta name="twitter:image" content="https://pokeandsee.com/assets/og-image.png">
+<meta name="twitter:image:alt" content="A poke sending ripples past an ice cube, a water drop, paint, a seedling and the Earth.">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "LearningResource",
+      "name": "World Globe",
+      "description": "Spin the real Earth and tap any country to see its flag and hear its name. Zoom in close and tap the sea to hear which ocean it is. For kids aged 3 to 5.",
+      "url": "https://pokeandsee.com/toys/globe/",
+      "inLanguage": "en",
+      "isAccessibleForFree": true,
+      "typicalAgeRange": "3-5",
+      "educationalLevel": "Preschool",
+      "learningResourceType": "Interactive simulation",
+      "teaches": "Geography: the countries and oceans of the world",
+      "author": {
+        "@id": "https://pokeandsee.com/#kavya"
+      },
+      "isPartOf": {
+        "@type": "WebSite",
+        "@id": "https://pokeandsee.com/#website",
+        "url": "https://pokeandsee.com/"
+      }
+    },
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Poke & See",
+          "item": "https://pokeandsee.com/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "World Globe",
+          "item": "https://pokeandsee.com/toys/globe/"
+        }
+      ]
+    }
+  ]
+}
+</script>
 <link rel="stylesheet" href="../../kit/tokens.css">
 <link rel="stylesheet" href="../../kit/kit.css">
 <style>
   /* World Globe: Frame bar on top, the Earth in space, a flag card when a country is tapped. */
   body { overflow: hidden; user-select: none; -webkit-user-select: none; }
+  .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
   .app { height: 100%; display: flex; flex-direction: column; gap: var(--space-3);
     padding-block: max(var(--space-3), env(safe-area-inset-top, 0px)) max(var(--space-3), env(safe-area-inset-bottom, 0px));
     padding-left: max(var(--space-4), env(safe-area-inset-left, 0px)); padding-right: max(var(--space-4), env(safe-area-inset-right, 0px)); }
@@ -45,11 +111,10 @@
   @keyframes rise { from { transform: translate(-50%, 30px) scale(.8); opacity: 0; } to { transform: translate(-50%, 0) scale(1); opacity: 1; } }
   .card img { width: clamp(84px, 14vw, 128px); aspect-ratio: 4 / 3; height: auto; object-fit: cover; border: 3px solid var(--ink); border-radius: 10px; flex: none; background: var(--paper); }
   .card .nm { font-family: var(--font-kid); font-weight: 700; font-size: clamp(22px, 4.2vw, 40px); line-height: 1.05; letter-spacing: .01em; text-wrap: balance; min-width: 0; }
-  .foot { display: flex; align-items: center; gap: var(--space-3); }
+  .foot { position: relative; display: flex; align-items: center; gap: var(--space-3); }
   .sound .off { display: none; } .sound[aria-pressed="false"] .on { display: none; } .sound[aria-pressed="false"] .off { display: block; }
-  .gu-wrap { position: relative; }
+  /* both panels open from the left of the footer, so Credits fits on a phone too */
   .gu-panel { position: absolute; left: 0; bottom: calc(100% + 12px); width: min(34rem, calc(100vw - 32px)); z-index: 5; box-shadow: var(--float); max-height: 70vh; overflow: auto; }
-  .gu-panel .credits { font-size: 13px; line-height: 1.45; color: var(--ink-soft); }
   .bar .ps-round:focus-visible, .mine:focus-visible, .card:focus-visible { outline: 4px solid var(--focus); outline-offset: 4px; }
   @media (max-width: 560px) { .card { bottom: 88px; max-width: calc(100% - 28px); } }
   @media (prefers-reduced-motion: reduce) { .card.show { animation: none; } }
@@ -61,6 +126,7 @@
 </head>
 <body>
 <div class="app">
+  <h1 class="sr">World globe</h1>
   <header class="bar">
     <a class="ps-round" href="../../" aria-label="Back to all toys"><svg viewBox="0 0 48 48" aria-hidden="true"><path d="M8 23L24 9l16 14v16a2 2 0 0 1-2 2H29V30h-10v11H10a2 2 0 0 1-2-2z" fill="var(--sun)" stroke="var(--ink)" stroke-width="3.5" stroke-linejoin="round"/></svg></a>
     <span class="ps-chip chip" id="chip" role="button" tabindex="0">EARTH</span>
@@ -78,7 +144,7 @@
     <button class="ps-round mine" id="mine" type="button" aria-label="Spin to my side of the world">
       <svg viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="17" fill="var(--ocean)" stroke="var(--ink)" stroke-width="3.5"/><path d="M14 15c4 1 6 4 5 8s-5 4-6 8c-1 3 1 5 2 6-5-3-7-9-6-15 1-3 3-5 5-7zM28 10c5 1 8 4 9 8-3 0-5 1-7 0-2-2 0-4-2-5-2-1-1-2 0-3z" fill="var(--grass)"/><path d="M30 20a6 6 0 0 1 12 0c0 5-6 11-6 11s-6-6-6-11z" fill="var(--sun)" stroke="var(--ink)" stroke-width="3" stroke-linejoin="round"/><circle cx="36" cy="20" r="2.2" fill="var(--ink)"/></svg>
     </button>
-    <div class="card" id="card" role="button" tabindex="0" hidden><img id="flag" alt=""><span class="wave" id="wave" hidden><svg viewBox="0 0 64 40" aria-hidden="true"><path d="M4 14c6-6 10-6 14 0s8 6 14 0 10-6 14 0 8 6 14 0" fill="none" stroke="#1C5F8E" stroke-width="5" stroke-linecap="round"/><path d="M4 28c6-6 10-6 14 0s8 6 14 0 10-6 14 0 8 6 14 0" fill="none" stroke="#3F8DB4" stroke-width="5" stroke-linecap="round"/></svg></span><span class="nm" id="name"></span></div>
+    <div class="card" id="card" role="button" tabindex="0" hidden><img id="flag" alt="" width="128" height="96"><span class="wave" id="wave" hidden><svg viewBox="0 0 64 40" aria-hidden="true"><path d="M4 14c6-6 10-6 14 0s8 6 14 0 10-6 14 0 8 6 14 0" fill="none" stroke="#1C5F8E" stroke-width="5" stroke-linecap="round"/><path d="M4 28c6-6 10-6 14 0s8 6 14 0 10-6 14 0 8 6 14 0" fill="none" stroke="#3F8DB4" stroke-width="5" stroke-linecap="round"/></svg></span><span class="nm" id="name"></span></div>
   </div>
 
   <div class="foot">
@@ -89,11 +155,16 @@
       <div class="ps-panel gu-panel" id="guPanel" hidden>
         <p class="ps-label">The science</p>
         <h3>World Globe</h3>
-        <p>This is the real Earth, photographed from space. The bright side is having daytime right now and the dark side is having night; the little lights are cities. The thin lines between countries are drawn by people. From space, you can't see them.</p>
-        <p>Pinch or scroll to come closer: sharper pictures load as you zoom, down to mountains, rivers and reefs. Come closer and tiny places like Singapore, Monaco or Tuvalu get a small ring so little fingers can find them, and the names of oceans, seas and lakes appear. Tap the sea at any zoom and it says which one it is.</p>
-        <p>The yellow pin button spins to roughly your side of the world, worked out from your device's time zone. It doesn't know where you are.</p>
-        <p class="ps-ask">Ask: where does someone you love live? Can you find it? Which ocean is closest to home?</p>
-        <p class="credits">Earth images: NASA Visible Earth (Blue Marble Next Generation, Earth at Night 2012). Borders: Natural Earth via world-atlas. Ocean, sea and lake names: Natural Earth. Flags: flag-icons. Some places shown are territories of another country; names follow common English usage.</p>
+        <p>This is the real Earth, photographed from space and lit the way the Sun lights it right now, so wherever it's dark, people are sleeping.</p>
+        <p class="ps-ask">Ask: where does someone you love live? Can you find it?</p>
+      </div>
+    </div>
+    <div class="gu-wrap">
+      <button class="ps-grownups" id="credits" type="button" aria-expanded="false" aria-controls="creditsPanel">
+        <svg viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="17" fill="var(--card)" stroke="var(--ink-soft)" stroke-width="3.5"/><path d="M29 18.5a7.5 7.5 0 1 0 0 11" fill="none" stroke="var(--ink-soft)" stroke-width="4" stroke-linecap="round"/></svg><span>Credits</span>
+      </button>
+      <div class="ps-panel gu-panel" id="creditsPanel" hidden>
+        <p>Earth photos: NASA Blue Marble Next Generation and Earth at Night. Borders, ocean, sea and lake names: Natural Earth. Flags: flag-icons. Some places are territories of another country, and names follow common English usage. The pin button guesses your side of the world from your device's time zone. It doesn't know where you are.</p>
       </div>
     </div>
   </div>
