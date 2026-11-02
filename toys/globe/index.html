@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>World Globe | Poke & See</title>
+<meta name="description" content="Spin a real Earth with your finger and zoom in close. Tap any country to see its flag and hear its name, or tap the sea to hear what it's called. Day and night shown as they are right now. A geography toy for kids aged 3 to 5.">
+<link rel="icon" href="../../kit/logo/poke-and-see-mark.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../kit/tokens.css">
+<link rel="stylesheet" href="../../kit/kit.css">
+<style>
+  /* World Globe: Frame bar on top, the Earth in space, a flag card when a country is tapped. */
+  body { overflow: hidden; user-select: none; -webkit-user-select: none; }
+  .app { height: 100%; display: flex; flex-direction: column; gap: var(--space-3);
+    padding-block: max(var(--space-3), env(safe-area-inset-top, 0px)) max(var(--space-3), env(safe-area-inset-bottom, 0px));
+    padding-left: max(var(--space-4), env(safe-area-inset-left, 0px)); padding-right: max(var(--space-4), env(safe-area-inset-right, 0px)); }
+  .bar { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); }
+  .bar a.ps-round { text-decoration: none; }
+  .chip { font-size: clamp(24px, 4.6vw, 40px); padding: 8px 20px 0; cursor: pointer; }
+  .stage { position: relative; flex: 1 1 auto; min-height: 280px; border: var(--stroke-control) solid var(--ink); border-radius: var(--radius-l); overflow: hidden;
+    background: radial-gradient(120% 90% at 50% 45%, #1C2A4E 0%, #0E1630 55%, #080D1E 100%); touch-action: none; }
+  .stage canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; cursor: grab; }
+  .stage canvas:active { cursor: grabbing; }
+  .loading { position: absolute; inset: 0; display: grid; place-items: center; color: #DCE6FD; font-family: var(--font-kid); font-weight: 700; font-size: 28px; letter-spacing: .04em; pointer-events: none; }
+  .loading { transition: opacity .5s; } .loading.gone { opacity: 0; }
+  .marks, .wlabels { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
+  .mk { position: absolute; left: 0; top: 0; width: 15px; height: 15px; margin: -7.5px 0 0 -7.5px; border-radius: 50%;
+    border: 2px solid rgba(255,255,255,.9); box-shadow: 0 0 0 1.5px rgba(8,13,30,.55), inset 0 0 0 1.5px rgba(8,13,30,.35); }
+  .mk.sel { width: 26px; height: 26px; margin: -13px 0 0 -13px; border: 3px solid var(--sun); }
+  .wl { position: absolute; left: 0; top: 0; white-space: nowrap; font-family: var(--font-kid); font-size: 13px; letter-spacing: .06em;
+    color: rgba(196,226,255,.92); text-shadow: 0 1px 2px rgba(5,12,30,.9), 0 0 6px rgba(5,12,30,.6); opacity: 0; transition: opacity .35s; }
+  .wl.on { opacity: 1; }
+  .wl.t0 { font-size: 15px; letter-spacing: .32em; text-transform: uppercase; font-weight: 700; color: rgba(196,226,255,.8); }
+  .wl.t1 { font-size: 14px; letter-spacing: .12em; }
+  .wl.lake { color: rgba(214,236,255,.92); }
+  .card .wave { width: clamp(84px, 14vw, 128px); aspect-ratio: 4 / 3; border: 3px solid var(--ink); border-radius: 10px; flex: none; background: #CFE6F7; display: grid; place-items: center; }
+  .card .wave svg { width: 70%; height: auto; }
+  .card [hidden] { display: none; }
+  .mine { position: absolute; right: 14px; bottom: 14px; }
+  .mine svg { width: 38px; height: 38px; }
+  .card { position: absolute; left: 50%; bottom: 14px; transform: translateX(-50%); display: flex; align-items: center; gap: var(--space-4);
+    max-width: calc(100% - 120px); padding: 12px 20px 12px 12px; background: var(--card); border: var(--stroke-control) solid var(--ink);
+    border-radius: var(--radius-l); box-shadow: var(--press); cursor: pointer; }
+  .card.show { animation: rise .45s cubic-bezier(.3,1.5,.5,1); }
+  @keyframes rise { from { transform: translate(-50%, 30px) scale(.8); opacity: 0; } to { transform: translate(-50%, 0) scale(1); opacity: 1; } }
+  .card img { width: clamp(84px, 14vw, 128px); aspect-ratio: 4 / 3; height: auto; object-fit: cover; border: 3px solid var(--ink); border-radius: 10px; flex: none; background: var(--paper); }
+  .card .nm { font-family: var(--font-kid); font-weight: 700; font-size: clamp(22px, 4.2vw, 40px); line-height: 1.05; letter-spacing: .01em; text-wrap: balance; min-width: 0; }
+  .foot { display: flex; align-items: center; gap: var(--space-3); }
+  .sound .off { display: none; } .sound[aria-pressed="false"] .on { display: none; } .sound[aria-pressed="false"] .off { display: block; }
+  .gu-wrap { position: relative; }
+  .gu-panel { position: absolute; left: 0; bottom: calc(100% + 12px); width: min(34rem, calc(100vw - 32px)); z-index: 5; box-shadow: var(--float); max-height: 70vh; overflow: auto; }
+  .gu-panel .credits { font-size: 13px; line-height: 1.45; color: var(--ink-soft); }
+  .bar .ps-round:focus-visible, .mine:focus-visible, .card:focus-visible { outline: 4px solid var(--focus); outline-offset: 4px; }
+  @media (max-width: 560px) { .card { bottom: 88px; max-width: calc(100% - 28px); } }
+  @media (prefers-reduced-motion: reduce) { .card.show { animation: none; } }
+</style>
+<script type="importmap">{ "imports": { "three": "./vendor/three.module.min.js" } }</script>
+<script src="vendor/d3-array.min.js"></script>
+<script src="vendor/d3-geo.min.js"></script>
+<script src="vendor/topojson-client.min.js"></script>
+</head>
+<body>
+<div class="app">
+  <header class="bar">
+    <a class="ps-round" href="../../" aria-label="Back to all toys"><svg viewBox="0 0 48 48" aria-hidden="true"><path d="M8 23L24 9l16 14v16a2 2 0 0 1-2 2H29V30h-10v11H10a2 2 0 0 1-2-2z" fill="var(--sun)" stroke="var(--ink)" stroke-width="3.5" stroke-linejoin="round"/></svg></a>
+    <span class="ps-chip chip" id="chip" role="button" tabindex="0">EARTH</span>
+    <button class="ps-round sound" id="sound" type="button" aria-pressed="true" aria-label="Sound">
+      <svg class="on" viewBox="0 0 48 48" aria-hidden="true"><path d="M7 18h8l11-9v30l-11-9H7z" fill="var(--ink)"/><path d="M32 17c3 4 3 10 0 14M37 12c6 7 6 17 0 24" stroke="var(--ink)" stroke-width="4" fill="none" stroke-linecap="round"/></svg>
+      <svg class="off" viewBox="0 0 48 48" aria-hidden="true"><path d="M7 18h8l11-9v30l-11-9H7z" fill="var(--ink)"/><path d="M32 18l10 12M42 18L32 30" stroke="var(--ink)" stroke-width="4" stroke-linecap="round"/></svg>
+    </button>
+  </header>
+
+  <div class="stage" id="stage" aria-label="The Earth. Drag to spin it, pinch to zoom. Tap a country to see its flag and hear its name, or tap the sea to hear its name.">
+    <canvas id="cv"></canvas>
+    <div class="wlabels" id="wlabels" aria-hidden="true"></div>
+    <div class="marks" id="marks" aria-hidden="true"></div>
+    <div class="loading" id="loading">EARTH</div>
+    <button class="ps-round mine" id="mine" type="button" aria-label="Spin to my side of the world">
+      <svg viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="17" fill="var(--ocean)" stroke="var(--ink)" stroke-width="3.5"/><path d="M14 15c4 1 6 4 5 8s-5 4-6 8c-1 3 1 5 2 6-5-3-7-9-6-15 1-3 3-5 5-7zM28 10c5 1 8 4 9 8-3 0-5 1-7 0-2-2 0-4-2-5-2-1-1-2 0-3z" fill="var(--grass)"/><path d="M30 20a6 6 0 0 1 12 0c0 5-6 11-6 11s-6-6-6-11z" fill="var(--sun)" stroke="var(--ink)" stroke-width="3" stroke-linejoin="round"/><circle cx="36" cy="20" r="2.2" fill="var(--ink)"/></svg>
+    </button>
+    <div class="card" id="card" role="button" tabindex="0" hidden><img id="flag" alt=""><span class="wave" id="wave" hidden><svg viewBox="0 0 64 40" aria-hidden="true"><path d="M4 14c6-6 10-6 14 0s8 6 14 0 10-6 14 0 8 6 14 0" fill="none" stroke="#1C5F8E" stroke-width="5" stroke-linecap="round"/><path d="M4 28c6-6 10-6 14 0s8 6 14 0 10-6 14 0 8 6 14 0" fill="none" stroke="#3F8DB4" stroke-width="5" stroke-linecap="round"/></svg></span><span class="nm" id="name"></span></div>
+  </div>
+
+  <div class="foot">
+    <div class="gu-wrap">
+      <button class="ps-grownups" id="gu" type="button" aria-expanded="false" aria-controls="guPanel">
+        <svg viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="17" fill="var(--card)" stroke="var(--ink-soft)" stroke-width="3.5"/><circle cx="24" cy="16" r="2.6" fill="var(--ink-soft)"/><path d="M24 22v11" stroke="var(--ink-soft)" stroke-width="4" stroke-linecap="round"/></svg><span>For grown-ups</span>
+      </button>
+      <div class="ps-panel gu-panel" id="guPanel" hidden>
+        <p class="ps-label">The science</p>
+        <h3>World Globe</h3>
+        <p>This is the real Earth, photographed from space. The bright side is having daytime right now and the dark side is having night; the little lights are cities. The thin lines between countries are drawn by people. From space, you can't see them.</p>
+        <p>Pinch or scroll to come closer: sharper pictures load as you zoom, down to mountains, rivers and reefs. Come closer and tiny places like Singapore, Monaco or Tuvalu get a small ring so little fingers can find them, and the names of oceans, seas and lakes appear. Tap the sea at any zoom and it says which one it is.</p>
+        <p>The yellow pin button spins to roughly your side of the world, worked out from your device's time zone. It doesn't know where you are.</p>
+        <p class="ps-ask">Ask: where does someone you love live? Can you find it? Which ocean is closest to home?</p>
+        <p class="credits">Earth images: NASA Visible Earth (Blue Marble Next Generation, Earth at Night 2012). Borders: Natural Earth via world-atlas. Ocean, sea and lake names: Natural Earth. Flags: flag-icons. Some places shown are territories of another country; names follow common English usage.</p>
+      </div>
+    </div>
+  </div>
+</div>
+<script type="module" src="globe.js"></script>
+</body>
+</html>
