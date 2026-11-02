@@ -57,9 +57,9 @@ const FRAG = `
     col += vec3(0.32, 0.58, 1.0) * rim * 0.42;
     gl_FragColor = vec4(col, 1.0);
   }`;
-function earthMaterial(tex, rect) {
+function earthMaterial(tex, rect, night) {   // a tile with its own night picture uses all of it; otherwise its corner of the world one
   return new THREE.ShaderMaterial({
-    uniforms: { dayT: { value: tex }, nightT: shared.nightT, sunDir: shared.sunDir, rect: { value: new THREE.Vector4(...rect) } },
+    uniforms: { dayT: { value: tex }, nightT: night ? { value: night } : shared.nightT, sunDir: shared.sunDir, rect: { value: new THREE.Vector4(...(night ? [0, 0, 1, 1] : rect)) } },
     vertexShader: VERT, fragmentShader: FRAG
   });
 }
@@ -181,20 +181,28 @@ function pump() {
   while (inflight < 4 && queue.length) {
     const t = queue.shift(); if (!tiles.has(tileKey(t.l, t.x, t.y))) continue;
     inflight++;
-    loader.load('tiles/' + tileKey(t.l, t.x, t.y) + '.jpg', tex => {
-      inflight--; tex.anisotropy = ANISO;
-      if (!tiles.has(tileKey(t.l, t.x, t.y))) { tex.dispose(); return pump(); }
+    // each tile has a day picture and a night picture (city lights) of the same patch
+    let day = null, night = null, left = 2;
+    const done = () => {
+      if (--left) return;
+      inflight--;
+      if (!day || !tiles.has(tileKey(t.l, t.x, t.y))) { day?.dispose(); night?.dispose(); return pump(); }
+      day.anisotropy = ANISO;
       const { L0, L1, B0, B1 } = tileBox(t.l, t.x, t.y), s = LV[t.l].segs;
       const geo = new THREE.SphereGeometry(R_TILE(t.l), s, s, (L0 + 180) * DEG, (L1 - L0) * DEG, (90 - B1) * DEG, (B1 - B0) * DEG);
-      t.mesh = new THREE.Mesh(geo, earthMaterial(tex, [(L0 + 180) / 360, (B0 + 90) / 180, (L1 - L0) / 360, (B1 - B0) / 180]));
+      t.mesh = new THREE.Mesh(geo, earthMaterial(day, [(L0 + 180) / 360, (B0 + 90) / 180, (L1 - L0) / 360, (B1 - B0) / 180], night));
       t.mesh.renderOrder = t.l; t.mesh.visible = false; globe.add(t.mesh); t.ready = true; dirty = true;
       pump();
-    }, undefined, () => { inflight--; pump(); });
+    };
+    loader.load('tiles/' + tileKey(t.l, t.x, t.y) + '.jpg', tex => { day = tex; done(); }, undefined, done);
+    loader.load('night/' + tileKey(t.l, t.x, t.y) + '.jpg', tex => { night = tex; done(); }, undefined, done);
   }
 }
 function dropTile(t) {
   tiles.delete(tileKey(t.l, t.x, t.y));
-  if (t.mesh) { globe.remove(t.mesh); t.mesh.geometry.dispose(); t.mesh.material.uniforms.dayT.value.dispose(); t.mesh.material.dispose(); }
+  if (!t.mesh) return;
+  const u = t.mesh.material.uniforms;
+  globe.remove(t.mesh); t.mesh.geometry.dispose(); u.dayT.value.dispose(); if (u.nightT !== shared.nightT) u.nightT.value.dispose(); t.mesh.material.dispose();
 }
 const tmpS = { x: 0, y: 0, z: 0 };
 function updateTiles() {
