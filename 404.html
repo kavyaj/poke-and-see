@@ -1,0 +1,400 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Page Not Found | Poke & See</title>
+<meta name="description" content="This page isn't here. Tap the cave to say hello and hear your echo come back, then head home to all the toys.">
+<meta name="robots" content="noindex">
+<meta property="og:title" content="Page Not Found | Poke &amp; See">
+<meta property="og:description" content="This page isn't here. Tap the cave to say hello and hear your echo come back, then head home to all the toys.">
+<meta property="og:site_name" content="Poke &amp; See">
+<meta property="og:image" content="https://pokeandsee.com/assets/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="A poke sending ripples past an ice cube, a water drop, paint, a seedling and the Earth.">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="/kit/logo/poke-and-see-mark.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/kit/tokens.css">
+<link rel="stylesheet" href="/kit/kit.css">
+<style>
+  /* Echo Cave: the 404 page is a tiny toy. A hill seen from the side, cut open to show the cave inside.
+     Tap to say hello: the sound travels to the back wall and bounces home. */
+  .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+  body { overflow: hidden; user-select: none; -webkit-user-select: none; }
+  .app { height: 100%; display: flex; flex-direction: column; gap: var(--space-3);
+    padding-block: max(var(--space-3), env(safe-area-inset-top, 0px)) max(var(--space-3), env(safe-area-inset-bottom, 0px));
+    padding-left: max(var(--space-4), env(safe-area-inset-left, 0px)); padding-right: max(var(--space-4), env(safe-area-inset-right, 0px)); }
+  .bar { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); }
+  .bar a.ps-round { text-decoration: none; }
+  .home { background: var(--sun); }
+  .chip { font-size: clamp(24px, 4.6vw, 40px); padding: 8px 20px 0; cursor: pointer; }
+  .stage { position: relative; flex: 1 1 auto; min-height: 260px; border: var(--stroke-control) solid var(--ink);
+    border-radius: var(--radius-l); overflow: hidden; background: var(--sky-day); touch-action: none; cursor: pointer; }
+  .stage canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+  .depth { display: grid; grid-template-columns: auto 1fr auto auto; align-items: center; gap: var(--space-4); }
+  .depth .ps-slider-wrap { padding-bottom: 0; min-width: 0; }
+  .cave-icon { width: 48px; height: 48px; flex: none; }
+  .cave-icon.big { width: 64px; height: 64px; }
+  .ps-readout { font-size: clamp(34px, 6vw, 56px); min-width: 4.2ch; text-align: right; }
+  .foot { display: flex; align-items: center; gap: var(--space-4); flex-wrap: wrap; }
+  .lost { margin: 0; font-family: var(--font-kid); font-size: 17px; color: var(--ink-soft); min-width: 0; }
+  .lost a { color: var(--ink); font-weight: 700; }
+  .sound .off { display: none; } .sound[aria-pressed="false"] .on { display: none; } .sound[aria-pressed="false"] .off { display: block; }
+  .gu-wrap { position: relative; }
+  .gu-panel { position: absolute; left: 0; bottom: calc(100% + 12px); width: min(30rem, calc(100vw - 32px)); z-index: 5; box-shadow: var(--float); }
+  .gu-panel .credits { font-size: 13px; line-height: 1.45; color: var(--ink-soft); }
+  .bar .ps-round:focus-visible, .stage:focus-visible, .chip:focus-visible { outline: 4px solid var(--focus); outline-offset: 4px; }
+  @media (max-width: 560px) { .depth { grid-template-columns: auto 1fr auto; } .ps-readout { grid-column: 1 / -1; text-align: center; order: -1; } .cave-icon { width: 36px; height: 36px; } .cave-icon.big { width: 48px; height: 48px; } }
+</style>
+</head>
+<body>
+<div class="app">
+  <h1 class="sr-only">Page not found</h1>
+  <header class="bar">
+    <a class="ps-round home" href="/" aria-label="Back to all toys"><svg viewBox="0 0 48 48" aria-hidden="true"><path d="M8 23L24 9l16 14v16a2 2 0 0 1-2 2H29V30h-10v11H10a2 2 0 0 1-2-2z" fill="var(--card)" stroke="var(--ink)" stroke-width="3.5" stroke-linejoin="round"/></svg></a>
+    <span class="ps-chip chip" id="chip" role="button" tabindex="0">ECHO</span>
+    <button class="ps-round sound" id="sound" type="button" aria-pressed="true" aria-label="Sound">
+      <svg class="on" viewBox="0 0 48 48" aria-hidden="true"><path d="M7 18h8l11-9v30l-11-9H7z" fill="var(--ink)"/><path d="M32 17c3 4 3 10 0 14M37 12c6 7 6 17 0 24" stroke="var(--ink)" stroke-width="4" fill="none" stroke-linecap="round"/></svg>
+      <svg class="off" viewBox="0 0 48 48" aria-hidden="true"><path d="M7 18h8l11-9v30l-11-9H7z" fill="var(--ink)"/><path d="M32 18l10 12M42 18L32 30" stroke="var(--ink)" stroke-width="4" stroke-linecap="round"/></svg>
+    </button>
+  </header>
+
+  <div class="stage" id="stage" tabindex="0" role="button" aria-label="Page not found, 404. A cave inside a hill. Tap to say hello and listen for the echo.">
+    <canvas id="cv"></canvas>
+  </div>
+
+  <div class="depth">
+    <svg class="cave-icon" viewBox="0 0 48 48" aria-hidden="true"><path d="M3 40c4-14 10-24 21-24s17 10 21 24z" fill="var(--rock)" stroke="var(--ink)" stroke-width="3" stroke-linejoin="round"/><path d="M14 40c0-6 3-10 7-10h6c3 0 4 4 4 10z" fill="var(--sky-night)"/></svg>
+    <div class="ps-slider-wrap"><input class="ps-slider" id="depth" type="range" min="0" max="1000" value="769" aria-label="How deep the cave is"></div>
+    <svg class="cave-icon big" viewBox="0 0 48 48" aria-hidden="true"><path d="M2 42C5 22 12 8 26 8s18 14 20 34z" fill="var(--rock)" stroke="var(--ink)" stroke-width="3" stroke-linejoin="round"/><path d="M8 42c0-7 3-12 8-12h24c3 0 4 6 4 12z" fill="var(--sky-night)"/></svg>
+    <div class="ps-readout" id="readout" aria-live="polite">170<small>m</small></div>
+  </div>
+
+  <div class="foot">
+    <div class="gu-wrap">
+      <button class="ps-grownups" id="gu" type="button" aria-expanded="false" aria-controls="guPanel">
+        <svg viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="17" fill="var(--card)" stroke="var(--ink-soft)" stroke-width="3.5"/><circle cx="24" cy="16" r="2.6" fill="var(--ink-soft)"/><path d="M24 22v11" stroke="var(--ink-soft)" stroke-width="4" stroke-linecap="round"/></svg><span>For grown-ups</span>
+      </button>
+      <div class="ps-panel gu-panel" id="guPanel" hidden>
+        <p class="ps-label">The science</p>
+        <h3>Echoes</h3>
+        <p>Sound travels about 343 metres every second and bounces off hard rock, so a hello into a cave 170 metres deep comes back one second later; in caves shallower than about 17 metres, it returns too fast to hear apart from your own voice.</p>
+        <p class="ps-ask">Ask: where else have you heard your voice come back?</p>
+        <p class="credits">Voice: Piper text-to-speech, Alba voice (CC BY 4.0).</p>
+      </div>
+    </div>
+    <p class="lost">This page isn't here. Your echo is. <a href="/">Back to all toys</a></p>
+  </div>
+</div>
+
+<script>
+(() => {
+  const $ = id => document.getElementById(id);
+  const cl = (x, a, b) => Math.max(a, Math.min(b, x));
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const SPEED = 343;                       // metres per second, sound in air
+  const D_MIN = 17, D_MAX = 340;           // cave depth in metres: echo after 0.1 s up to 2 s
+  const SPREAD = 0.8;                      // half-angle of the drawn sound arcs, radians
+
+  /* ---------------- canvas ---------------- */
+  const stage = $('stage'), cv = $('cv'), ctx = cv.getContext('2d');
+  let W = 1, H = 1, DPR = 1;
+  function resize() {
+    const r = stage.getBoundingClientRect(); DPR = Math.min(devicePixelRatio || 1, 2);
+    W = r.width; H = r.height; cv.width = Math.round(W * DPR); cv.height = Math.round(H * DPR);
+  }
+  new ResizeObserver(resize).observe(stage); resize();
+
+  /* ---------------- the scene, worked out from the stage size ---------------- */
+  let depth = 170;
+  const sliderToDepth = v => Math.round(D_MIN * Math.pow(D_MAX / D_MIN, v / 1000));
+  function layout() {
+    const ground = H * 0.82;
+    const face = W * 0.22;                                   // the hill's cliff face, where the cave opens
+    const kid = { x: W * 0.1, h: cl(Math.min(W, H) * 0.16, 44, 84) };
+    const ceil = ground - cl(H * 0.24, 70, 150);             // cave roof height
+    const lenMin = W * 0.16, lenMax = W * 0.96 - face;
+    const k = Math.log(depth / D_MIN) / Math.log(D_MAX / D_MIN);
+    const back = face + lenMin + (lenMax - lenMin) * k;      // the cave's back wall
+    const mouthY = ground - kid.h * 0.8;                     // the height you call from
+    return { ground, face, kid, ceil, back, mouthY };
+  }
+  const hillTop = x => H * 0.13 + 10 * Math.sin(x * 0.021) + 6 * Math.sin(x * 0.057);
+  function hillPath(L) {
+    ctx.beginPath();
+    ctx.moveTo(L.face - 8, L.ground);
+    ctx.bezierCurveTo(L.face - 30, H * 0.5, L.face - 6, H * 0.2, L.face + W * 0.08, hillTop(L.face + W * 0.08));
+    for (let x = L.face + W * 0.08; x <= W + 20; x += 24) ctx.lineTo(x, hillTop(x));
+    ctx.lineTo(W + 20, L.ground); ctx.closePath();
+  }
+  const roof = (L, x) => L.ceil + 6 * Math.sin(x * 0.07) + 4 * Math.sin(x * 0.19);
+  // the hollow inside the hill: a lumpy roof, a flat floor, a rounded back wall
+  function cavePath(L, extendLeft) {
+    const { ground, ceil, face, back } = L, h = ground - ceil;
+    ctx.beginPath();
+    ctx.moveTo(extendLeft ? -10 : face - 4, ground);
+    if (extendLeft) { ctx.lineTo(-10, ceil - h * 0.8); ctx.lineTo(face - 6, ceil - h * 0.8); }
+    ctx.lineTo(face - 6, ceil + h * 0.18);
+    ctx.quadraticCurveTo(face + 6, ceil - 2, face + 30, roof(L, face + 30));
+    for (let x = face + 30; x < back - h * 0.45; x += 14) ctx.lineTo(x, roof(L, x));
+    ctx.bezierCurveTo(back + h * 0.12, ceil - 4, back + h * 0.22, ground - h * 0.35, back - h * 0.05, ground);
+    ctx.closePath();
+  }
+  const STALACTITES = [[0.22, 0.28], [0.34, 0.16], [0.52, 0.34], [0.7, 0.2], [0.84, 0.26]];
+  const STALAGMITES = [[0.3, 0.16], [0.6, 0.24], [0.78, 0.12]];
+
+  /* drips from the cave roof */
+  const drips = [];
+  let nextDrip = 2;
+
+  /* ---------------- calls: each hello and its echoes ---------------- */
+  const calls = [];        // {t0}
+  let hint = true;
+  const TRIPS = [1, 0.4];  // brightness of the first trip home and the fainter second one
+
+  function bubble(x, y, text, size, alpha) {
+    if (alpha <= 0) return;
+    ctx.save(); ctx.globalAlpha = alpha;
+    ctx.font = `700 ${size}px Andika, "Trebuchet MS", sans-serif`;
+    const w = ctx.measureText(text).width + size * 1.1, h = size * 1.7;
+    const bx = cl(x - w / 2, 6, W - w - 6), by = y - h;
+    ctx.fillStyle = '#FFFFFF'; ctx.strokeStyle = '#1B2333'; ctx.lineWidth = 3;
+    ctx.beginPath(); ctx.roundRect(bx, by, w, h, h / 2); ctx.fill(); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(x - 6, by + h - 2); ctx.lineTo(x, by + h + 9); ctx.lineTo(x + 6, by + h - 2); ctx.closePath(); ctx.fill();
+    ctx.beginPath(); ctx.moveTo(x - 6, by + h + 1); ctx.lineTo(x, by + h + 9); ctx.lineTo(x + 6, by + h + 1); ctx.stroke();
+    ctx.fillStyle = '#1B2333'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.fillText(text, bx + w / 2, by + h / 2 + 1);
+    ctx.restore();
+  }
+
+  function draw(now) {
+    const L = layout();
+    ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+    // sky
+    const sky = ctx.createLinearGradient(0, 0, 0, L.ground);
+    sky.addColorStop(0, '#A9D4EF'); sky.addColorStop(1, '#D6ECF8');
+    ctx.fillStyle = sky; ctx.fillRect(0, 0, W, H);
+    // ground outside
+    ctx.fillStyle = '#6B4B34'; ctx.fillRect(0, L.ground, W, H);
+    ctx.fillStyle = '#7FA14C'; ctx.fillRect(0, L.ground - 3, W, 7);
+    // the hill, cut open
+    const rock = ctx.createLinearGradient(0, H * 0.12, 0, L.ground);
+    rock.addColorStop(0, '#A29380'); rock.addColorStop(1, '#7E705F');
+    ctx.fillStyle = rock; hillPath(L); ctx.fill();
+    // grass along the hill top, and rock layers so it reads as solid stone
+    ctx.save(); hillPath(L); ctx.clip();
+    ctx.fillStyle = '#4F7B36';
+    ctx.beginPath(); ctx.moveTo(L.face - 40, 0);
+    for (let x = L.face - 40; x <= W + 20; x += 10) ctx.lineTo(x, hillTop(x) + 12 + 4 * Math.sin(x * 0.3));
+    ctx.lineTo(W + 20, 0); ctx.fill();
+    ctx.strokeStyle = 'rgba(27,35,51,0.12)'; ctx.lineWidth = 2;
+    for (let i = 1; i < 6; i++) { const y = H * 0.18 + (L.ground - H * 0.18) * i / 6; ctx.beginPath(); for (let x = L.face - 40; x <= W; x += 20) ctx.lineTo(x, y + 5 * Math.sin(x * 0.03 + i)); ctx.stroke(); }
+    ctx.restore();
+    ctx.strokeStyle = '#1B2333'; ctx.lineWidth = 3; hillPath(L); ctx.stroke();
+    // big 404, cut into the rock above the cave
+    const top = H * 0.2, fs = Math.min(W * 0.2, (L.ceil - top) * 0.9, 170);
+    const tx = (L.face + W) / 2, ty = (top + L.ceil) / 2 + fs * 0.06;
+    ctx.font = `600 ${fs}px Syne, "Avenir Next", sans-serif`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.fillStyle = 'rgba(255,248,232,0.5)'; ctx.fillText('404', tx + 2, ty + 3);
+    ctx.fillStyle = '#463C33'; ctx.fillText('404', tx, ty);
+    // the cave: dark, darker toward the back
+    const dark = ctx.createLinearGradient(L.face, 0, L.back, 0);
+    dark.addColorStop(0, '#3A3440'); dark.addColorStop(0.35, '#1E2436'); dark.addColorStop(1, '#121828');
+    ctx.fillStyle = dark; cavePath(L, false); ctx.fill();
+    // the back wall lights up as the hello hits it
+    const fl = flash(now);
+    if (fl > 0) {
+      ctx.save(); cavePath(L, false); ctx.clip();
+      const g = ctx.createRadialGradient(L.back, L.mouthY, 4, L.back, L.mouthY, (L.ground - L.ceil) * 1.2);
+      g.addColorStop(0, `rgba(169,212,239,${0.6 * fl})`); g.addColorStop(1, 'rgba(169,212,239,0)');
+      ctx.fillStyle = g; ctx.fillRect(L.back - 260, L.ceil - 20, 320, L.ground - L.ceil + 40); ctx.restore();
+    }
+    ctx.strokeStyle = '#1B2333'; ctx.lineWidth = 3; cavePath(L, false); ctx.stroke();
+    // stalactites and stalagmites
+    ctx.fillStyle = '#7E705F'; ctx.strokeStyle = 'rgba(27,35,51,0.6)'; ctx.lineWidth = 2;
+    const span = L.back - L.face, ch = L.ground - L.ceil;
+    for (const [f, len] of STALACTITES) {
+      const x = L.face + span * f; if (x > L.back - ch * 0.4) continue;
+      const y = roof(L, x) - 2;
+      ctx.beginPath(); ctx.moveTo(x - 9, y); ctx.lineTo(x + 9, y); ctx.lineTo(x + 1.5, y + ch * len); ctx.lineTo(x - 1.5, y + ch * len); ctx.closePath(); ctx.fill(); ctx.stroke();
+    }
+    for (const [f, len] of STALAGMITES) {
+      const x = L.face + span * f; if (x > L.back - ch * 0.4) continue;
+      ctx.beginPath(); ctx.moveTo(x - 11, L.ground + 1); ctx.lineTo(x + 11, L.ground + 1); ctx.lineTo(x + 2, L.ground - ch * len); ctx.lineTo(x - 2, L.ground - ch * len); ctx.closePath(); ctx.fill(); ctx.stroke();
+    }
+    // drips
+    for (const d of drips) {
+      if (d.y < L.ground) { ctx.fillStyle = 'rgba(203,234,246,0.95)'; ctx.beginPath(); ctx.ellipse(d.x, d.y, 2.5, 4.5, 0, 0, Math.PI * 2); ctx.fill(); }
+      else { const k = Math.min(1, (now - d.hit) / 600); ctx.strokeStyle = `rgba(203,234,246,${0.85 * (1 - k)})`; ctx.lineWidth = 2; ctx.beginPath(); ctx.ellipse(d.x, L.ground - 2, 3 + 16 * k, 1.5 + 3 * k, 0, 0, Math.PI * 2); ctx.stroke(); }
+    }
+    // the child calling: a plain silhouette with a sun-yellow top
+    const K = L.kid, kx = K.x, kg = L.ground, kh = K.h;
+    ctx.fillStyle = '#1B2333';
+    ctx.beginPath(); ctx.roundRect(kx - kh * 0.13, kg - kh * 0.38, kh * 0.1, kh * 0.38, 3); ctx.roundRect(kx + kh * 0.03, kg - kh * 0.38, kh * 0.1, kh * 0.38, 3); ctx.fill();
+    ctx.fillStyle = '#FFC83D'; ctx.strokeStyle = '#1B2333'; ctx.lineWidth = 2.5;
+    ctx.beginPath(); ctx.roundRect(kx - kh * 0.18, kg - kh * 0.72, kh * 0.36, kh * 0.38, kh * 0.1); ctx.fill(); ctx.stroke();
+    ctx.fillStyle = '#1B2333'; ctx.beginPath(); ctx.arc(kx, kg - kh * 0.86, kh * 0.15, 0, Math.PI * 2); ctx.fill();
+    ctx.strokeStyle = '#1B2333'; ctx.lineWidth = kh * 0.08; ctx.lineCap = 'round';      // a hand cupped to the mouth
+    ctx.beginPath(); ctx.moveTo(kx + kh * 0.12, kg - kh * 0.64); ctx.lineTo(kx + kh * 0.24, kg - kh * 0.8); ctx.stroke();
+    // the sound: arcs travelling to the back wall and bouncing home
+    const sx = kx + kh * 0.24, sy = L.mouthY, dist = L.back - sx, T = depth / SPEED, v = dist / T;
+    ctx.save(); cavePath(L, true); ctx.clip();
+    for (const c of calls) {
+      const t = (now - c.t0) / 1000;
+      TRIPS.forEach((a, i) => {
+        const tt = t - i * 2 * T; if (tt < 0) return;
+        const r = v * tt;
+        if (r < dist) arcs(sx + r, sy, 1, a, ch);                                         // going in: ))) moving right
+        else if (r < 2 * dist + 80) arcs(sx + 2 * dist - r, sy, -1, a * (r < 2 * dist ? 0.9 : 0.9 * (1 - (r - 2 * dist) / 80)), ch);   // bounced: ((( coming home
+      });
+    }
+    ctx.restore();
+    // speech bubbles: your hello, then the cave's
+    for (const c of calls) {
+      const t = (now - c.t0) / 1000;
+      if (t < 1.1) bubble(sx, kg - kh * 1.15, 'Hello!', 20, Math.min(1, (1.1 - t) * 3));
+      TRIPS.forEach((a, i) => {
+        const te = t - (i + 1) * 2 * T;
+        if (te > 0 && te < 1) bubble(sx + 8 + i * 6, kg - kh * 1.15 - 8 - i * 6, 'hello', 16 - i * 2, a * Math.min(1, (1 - te) * 3) * 0.95);
+      });
+    }
+    // a gentle sun-coloured ring says "tap" until the first hello
+    if (hint) {
+      const k = (now / 1400) % 1, r = kh * 0.6 + kh * 0.5 * k;
+      ctx.lineWidth = 4; ctx.strokeStyle = `rgba(255,200,61,${0.95 * (1 - k)})`;
+      ctx.beginPath(); ctx.arc(kx, kg - kh * 0.55, r, 0, Math.PI * 2); ctx.stroke();
+    }
+  }
+  // three curved strokes, like ))) , with the front one at x
+  function arcs(x, cy, dir, a, ch) {
+    if (a <= 0.01) return;
+    const R = ch * 0.42;
+    ctx.lineCap = 'round';
+    for (let j = 0; j < 3; j++) {
+      const fx = x - dir * j * 13, cx = fx - dir * R;
+      ctx.strokeStyle = `rgba(214,236,255,${a * (1 - j * 0.3)})`; ctx.lineWidth = 4.5 - j;
+      ctx.shadowColor = 'rgba(169,212,239,0.8)'; ctx.shadowBlur = 8;
+      const mid = dir > 0 ? 0 : Math.PI;
+      ctx.beginPath(); ctx.arc(cx, cy, R, mid - SPREAD, mid + SPREAD); ctx.stroke();
+    }
+    ctx.shadowBlur = 0;
+  }
+  function flash(now) {
+    let f = 0; const T = depth / SPEED * 1000;
+    for (const c of calls) TRIPS.forEach((a, i) => { const d = Math.abs(now - c.t0 - T - i * 2 * T); if (d < 200) f = Math.max(f, (1 - d / 200) * a); });
+    return f;
+  }
+
+  let last = performance.now();
+  function frame(now) {
+    const dt = Math.min(0.05, (now - last) / 1000); last = now;
+    const L = layout();
+    nextDrip -= dt;
+    if (nextDrip <= 0 && !reduce) {
+      nextDrip = 3.5 + Math.random() * 4.5;
+      const span = L.back - L.face, ch = L.ground - L.ceil;
+      const tips = STALACTITES.filter(([f]) => L.face + span * f < L.back - ch * 0.4);
+      if (tips.length) {
+        const [f, len] = tips[Math.floor(Math.random() * tips.length)], x = L.face + span * f;
+        drips.push({ x, y: roof(L, x) + ch * len, v: 0, hit: 0 });
+      }
+    }
+    for (const d of drips) if (d.y < L.ground) { d.v += 900 * dt; d.y += d.v * dt; if (d.y >= L.ground) { d.hit = now; plink(); } }
+    while (drips.length && drips[0].hit && now - drips[0].hit > 700) drips.shift();
+    const T = depth / SPEED * 1000;
+    while (calls.length && now - calls[0].t0 > 4 * T + 1500) calls.shift();
+    draw(now);
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+
+  /* ---------------- saying hello ---------------- */
+  function hello() {
+    unlock(); hint = false;
+    if (!AC || muted) { calls.push({ t0: performance.now() }); return; }
+    if (helloBuf) return start();
+    ensureHello().then(() => helloBuf ? start() : (calls.push({ t0: performance.now() }), say('Hello')));
+  }
+  function start() {                               // sound and picture leave together
+    calls.push({ t0: performance.now() });
+    const T = depth / SPEED, t0 = AC.currentTime + 0.01;
+    play(t0, 1, 20000);                            // you
+    play(t0 + 2 * T, 0.42, 3200);                  // the cave answers, softer and duller
+    play(t0 + 4 * T, 0.15, 1800);                  // and once more, fainter
+  }
+  stage.addEventListener('pointerdown', hello);
+  stage.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); hello(); } });
+
+  const slider = $('depth'), readout = $('readout');
+  function setDepth() {
+    depth = sliderToDepth(+slider.value);
+    readout.innerHTML = depth + '<small>m</small>';
+    slider.setAttribute('aria-valuetext', depth + ' metres deep, the echo comes back after ' + (2 * depth / SPEED).toFixed(1) + ' seconds');
+  }
+  slider.style.setProperty('--ps-track', 'linear-gradient(90deg, var(--rock), #4A4250 55%, var(--sky-night))');
+  slider.addEventListener('input', () => { setDepth(); calls.length = 0; });
+  slider.addEventListener('change', () => { unlock(); tick(); });
+  setDepth();
+
+  /* ---------------- sound ---------------- */
+  let AC = null, master = null, muted = false, helloBuf = null;
+  try { muted = localStorage.getItem('ps-muted') === '1'; } catch (e) {}
+  function unlock() {
+    if (AC) { if (AC.state === 'suspended') AC.resume(); return; }
+    try { AC = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) { return; }
+    master = AC.createGain(); master.gain.value = muted ? 0 : 0.9; master.connect(AC.destination);
+  }
+  // the hello is a tiny file, fetched straight away so the first tap can use it
+  const helloBytes = fetch('/audio/hello.mp3').then(r => r.ok ? r.arrayBuffer() : null).catch(() => null);
+  let decoding = null;
+  function ensureHello() {
+    if (!decoding) decoding = helloBytes.then(b => b && AC.decodeAudioData(b)).then(buf => { if (buf) helloBuf = buf; }).catch(() => {});
+    return decoding;
+  }
+  const ok = () => AC && !muted;
+  function play(when, vol, cutoff) {
+    const s = AC.createBufferSource(), g = AC.createGain(), lp = AC.createBiquadFilter();
+    s.buffer = helloBuf; lp.type = 'lowpass'; lp.frequency.value = cutoff; g.gain.value = vol;
+    s.connect(lp); lp.connect(g); g.connect(master); s.start(when);
+  }
+  function plink() {
+    if (!ok()) return;
+    const t0 = AC.currentTime, T = depth / SPEED;
+    [[1, 0.05], [0.35, 0.05 * 0.3]].forEach(([k, vol], i) => {
+      const o = AC.createOscillator(), g = AC.createGain(), when = t0 + i * 2 * T;
+      o.type = 'sine'; o.frequency.setValueAtTime(1400 * k + 500, when); o.frequency.exponentialRampToValueAtTime(700, when + 0.12);
+      g.gain.setValueAtTime(0.0001, when); g.gain.exponentialRampToValueAtTime(vol, when + 0.005); g.gain.exponentialRampToValueAtTime(0.0001, when + 0.18);
+      o.connect(g); g.connect(master); o.start(when); o.stop(when + 0.2);
+    });
+  }
+  function tick() {
+    if (!ok()) return; const o = AC.createOscillator(), g = AC.createGain(), t0 = AC.currentTime;
+    o.type = 'triangle'; o.frequency.value = 520; g.gain.setValueAtTime(0.0001, t0); g.gain.exponentialRampToValueAtTime(0.1, t0 + 0.01); g.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.08);
+    o.connect(g); g.connect(master); o.start(t0); o.stop(t0 + 0.1);
+  }
+  function say(text) {
+    if (muted || !('speechSynthesis' in window)) return;
+    try { speechSynthesis.cancel(); const u = new SpeechSynthesisUtterance(text); u.rate = 0.85; u.lang = 'en-US'; speechSynthesis.speak(u); } catch (e) {}
+  }
+  $('chip').addEventListener('click', () => { unlock(); say('Echo'); });
+  $('chip').addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); unlock(); say('Echo'); } });
+  const snd = $('sound');
+  function setMuted(m) {
+    muted = m; snd.setAttribute('aria-pressed', m ? 'false' : 'true');
+    try { localStorage.setItem('ps-muted', m ? '1' : '0'); } catch (e) {}
+    if (master) master.gain.setTargetAtTime(m ? 0 : 0.9, AC.currentTime, 0.05);
+    if (m && 'speechSynthesis' in window) try { speechSynthesis.cancel(); } catch (e) {}
+  }
+  snd.addEventListener('click', () => { unlock(); setMuted(!muted); if (!muted) tick(); });
+  snd.setAttribute('aria-pressed', muted ? 'false' : 'true');
+  document.addEventListener('visibilitychange', () => { if (!AC) return; document.hidden ? AC.suspend() : AC.resume(); });
+
+  /* grown-ups */
+  const gu = $('gu'), guPanel = $('guPanel');
+  gu.addEventListener('click', e => { e.stopPropagation(); const open = guPanel.hidden; guPanel.hidden = !open; gu.setAttribute('aria-expanded', open ? 'true' : 'false'); });
+  document.addEventListener('pointerdown', e => { if (!guPanel.hidden && !e.target.closest('.gu-wrap')) { guPanel.hidden = true; gu.setAttribute('aria-expanded', 'false'); } });
+})();
+</script>
+</body>
+</html>
